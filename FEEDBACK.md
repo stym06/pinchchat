@@ -22,7 +22,8 @@
 ## Item #15
 - **Date:** 2026-02-11
 - **Priority:** medium
-- **Status:** in-progress
+- **Status:** done
+- **Completed:** 2026-02-11 — commit `72f7d76`
 - **Description:** Ajouter des icônes/emojis sur les tool call badges dans l'app (comme sur la démo de la landing page)
   - Sur la landing page les badges tool calls ont des petits emojis (🔍 pour search, ⚡ pour exec, etc.) — c'est sympa et aide à identifier visuellement le type de tool
   - Reproduire ça dans la vraie app : ajouter une petite icône/emoji devant le nom du tool dans chaque badge
