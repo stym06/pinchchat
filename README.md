@@ -3,6 +3,7 @@
 [![CI](https://github.com/MarlBurroW/pinchchat/actions/workflows/ci.yml/badge.svg)](https://github.com/MarlBurroW/pinchchat/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](https://nodejs.org/)
+[![Docker](https://img.shields.io/badge/docker-ghcr.io-blue)](https://github.com/MarlBurroW/pinchchat/pkgs/container/pinchchat)
 
 **A sleek, dark-themed webchat UI for [OpenClaw](https://github.com/openclaw/openclaw) — monitor sessions, stream responses, and inspect tool calls in real-time.**
 
@@ -22,18 +23,31 @@
 
 ## 🚀 Quick Start
 
-### Prerequisites
+### Docker (recommended)
 
-- **Node.js 18+**
-- **OpenClaw gateway** running and accessible
+```bash
+docker run -p 3000:80 ghcr.io/marlburrow/pinchchat:latest
+```
 
-### Installation
+Open `http://localhost:3000` and enter your OpenClaw gateway URL + token on the login screen.
+
+Or use Docker Compose:
+
+```bash
+curl -O https://raw.githubusercontent.com/MarlBurroW/pinchchat/main/docker-compose.yml
+docker compose up -d
+```
+
+### From source
+
+**Prerequisites:** Node.js 18+, an OpenClaw gateway running and accessible.
 
 ```bash
 git clone https://github.com/MarlBurroW/pinchchat.git
 cd pinchchat
 npm install
 cp .env.example .env
+npm run dev
 ```
 
 Optionally edit `.env` to pre-fill the gateway URL:
@@ -43,13 +57,7 @@ VITE_GATEWAY_WS_URL=ws://localhost:18789
 VITE_LOCALE=en          # or "fr" for French UI
 ```
 
-Start the dev server:
-
-```bash
-npm run dev
-```
-
-### Production
+### Production build
 
 ```bash
 npm run build

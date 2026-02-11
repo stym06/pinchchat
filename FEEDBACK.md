@@ -43,7 +43,7 @@
 ## Item #6
 - **Date:** 2026-02-11
 - **Priority:** high
-- **Status:** pending
+- **Status:** in-progress
 - **Description:** Installation simplifiée — Docker + oneliner
   - **Dockerfile** : image légère (nginx:alpine ou similar) qui sert le build statique. Multi-stage : node pour build, nginx pour serve. Pas de secrets dans l'image (tout est runtime via le login screen).
   - **docker-compose.yml** : exemple simple avec juste le container PinchChat
@@ -51,3 +51,14 @@
   - **Oneliner** : `docker run -p 3000:80 ghcr.io/marlburrow/pinchchat:latest` dans le README
   - Alternative sans Docker : `npx pinchchat` ou un script curl qui télécharge le dernier release (build statique) et lance un serveur
   - Mettre à jour le README avec les nouvelles méthodes d'installation
+
+## Item #7
+- **Date:** 2026-02-11
+- **Priority:** high
+- **Status:** pending
+- **Description:** Affichage des images dans le chat
+  - Rendre les images inline dans les messages (quand le gateway envoie des images en base64/URL via `mediaUrls` ou content blocks de type image)
+  - Rendre les images dans les tool results (quand un tool `read` retourne une image, l'afficher au lieu de juste "Read image file [image/png]")
+  - Support des formats courants : png, jpg, gif, webp
+  - Les images doivent être cliquables pour voir en taille réelle (lightbox ou nouvel onglet)
+  - Garder le style dark theme cohérent (bordures arrondies, pas de fond blanc autour des images)

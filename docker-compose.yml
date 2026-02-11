@@ -1,0 +1,8 @@
+services:
+  pinchchat:
+    image: ghcr.io/marlburrow/pinchchat:latest
+    # Or build locally:
+    # build: .
+    ports:
+      - "3000:80"
+    restart: unless-stopped
