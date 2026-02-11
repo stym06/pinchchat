@@ -43,7 +43,7 @@ export function Chat({ messages, isGenerating, status, onSend, onAbort }: Props)
 
   return (
     <div className="flex-1 flex flex-col min-h-0">
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto" role="log" aria-label="Chat messages" aria-live="polite">
         <div className="max-w-4xl mx-auto py-4">
           {messages.length === 0 && (
             <div className="flex flex-col items-center justify-center h-[60vh] text-zinc-500">
@@ -54,7 +54,7 @@ export function Chat({ messages, isGenerating, status, onSend, onAbort }: Props)
                 </div>
               </div>
               <div className="text-lg text-zinc-200 font-semibold">PinchChat</div>
-              <div className="text-sm mt-1 text-zinc-500">Envoie un message pour commencer</div>
+              <div className="text-sm mt-1 text-zinc-500">Send a message to get started</div>
             </div>
           )}
           {messages.filter(hasVisibleContent).map(msg => (

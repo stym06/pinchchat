@@ -188,7 +188,7 @@ export function ToolCall({ name, input, result }: { name: string; input?: any; r
           )}
           {result && (
             <div>
-              <div className={`text-[11px] ${c.text} opacity-70 mb-1 font-medium`}>Résultat</div>
+              <div className={`text-[11px] ${c.text} opacity-70 mb-1 font-medium`}>Result</div>
               <HighlightedPre
                 text={result}
                 className="text-xs bg-[#1a1a20]/60 border border-white/5 p-2.5 rounded-xl overflow-x-auto text-zinc-300 max-h-64 overflow-y-auto font-mono"

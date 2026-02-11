@@ -13,7 +13,7 @@ export function Sidebar({ sessions, activeSession, onSwitch, open, onClose }: Pr
   return (
     <>
       {open && <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden" onClick={onClose} />}
-      <aside className={`fixed lg:relative top-0 left-0 h-full w-72 bg-[#1e1e24]/95 border-r border-white/8 z-50 transform transition-transform lg:translate-x-0 ${open ? 'translate-x-0' : '-translate-x-full'} flex flex-col backdrop-blur-xl`}>
+      <aside role="navigation" aria-label="Sessions" className={`fixed lg:relative top-0 left-0 h-full w-72 bg-[#1e1e24]/95 border-r border-white/8 z-50 transform transition-transform lg:translate-x-0 ${open ? 'translate-x-0' : '-translate-x-full'} flex flex-col backdrop-blur-xl`}>
         <div className="h-14 flex items-center justify-between px-4 border-b border-white/8">
           <div className="flex items-center gap-2">
             <div className="relative">
@@ -30,7 +30,7 @@ export function Sidebar({ sessions, activeSession, onSwitch, open, onClose }: Pr
         </div>
         <div className="flex-1 overflow-y-auto py-2 px-2">
           {sessions.length === 0 && (
-            <div className="px-3 py-8 text-center text-zinc-500 text-sm">Aucune session</div>
+            <div className="px-3 py-8 text-center text-zinc-500 text-sm">No sessions</div>
           )}
           {sessions.map(s => {
             const isActive = s.key === activeSession;

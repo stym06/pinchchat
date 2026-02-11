@@ -13,8 +13,8 @@ export function Header({ status, sessionKey, onToggleSidebar, activeSessionData 
 
   return (
     <>
-    <header className="h-14 border-b border-white/8 bg-[#232329]/90 backdrop-blur-xl flex items-center px-4 gap-3 shrink-0">
-      <button onClick={onToggleSidebar} className="lg:hidden p-2 rounded-2xl hover:bg-white/5 text-zinc-400 transition-colors">
+    <header className="h-14 border-b border-white/8 bg-[#232329]/90 backdrop-blur-xl flex items-center px-4 gap-3 shrink-0" role="banner">
+      <button onClick={onToggleSidebar} aria-label="Toggle sidebar" className="lg:hidden p-2 rounded-2xl hover:bg-white/5 text-zinc-400 transition-colors">
         <Menu size={20} />
       </button>
       <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -33,17 +33,17 @@ export function Header({ status, sessionKey, onToggleSidebar, activeSessionData 
         {status === 'connected' ? (
           <div className="flex items-center gap-2 rounded-2xl border border-white/8 bg-zinc-800/30 px-3 py-1.5">
             <span className="w-2 h-2 rounded-full bg-cyan-300/80 shadow-[0_0_12px_rgba(34,211,238,0.6)]" />
-            <span className="text-xs text-zinc-300 hidden sm:inline">Connecté</span>
+            <span className="text-xs text-zinc-300 hidden sm:inline">Connected</span>
           </div>
         ) : status === 'connecting' ? (
           <div className="flex items-center gap-2 rounded-2xl border border-white/8 bg-zinc-800/30 px-3 py-1.5">
             <span className="w-2 h-2 rounded-full bg-yellow-400/80 pulse-dot" />
-            <span className="text-xs text-zinc-300 hidden sm:inline">Connexion…</span>
+            <span className="text-xs text-zinc-300 hidden sm:inline">Connecting…</span>
           </div>
         ) : (
           <div className="flex items-center gap-2 rounded-2xl border border-white/8 bg-zinc-800/30 px-3 py-1.5">
             <span className="w-2 h-2 rounded-full bg-red-400/80" />
-            <span className="text-xs text-zinc-300 hidden sm:inline">Déconnecté</span>
+            <span className="text-xs text-zinc-300 hidden sm:inline">Disconnected</span>
           </div>
         )}
       </div>
