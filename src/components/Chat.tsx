@@ -13,8 +13,19 @@ interface Props {
   onAbort: () => void;
 }
 
+function isNoReply(msg: ChatMessage): boolean {
+  const text = (msg.content || '').trim();
+  if (text === 'NO_REPLY') return true;
+  // Also check text blocks for NO_REPLY-only content
+  const textBlocks = msg.blocks.filter(b => b.type === 'text');
+  if (textBlocks.length === 1 && (textBlocks[0] as { text: string }).text.trim() === 'NO_REPLY') return true;
+  return false;
+}
+
 function hasVisibleContent(msg: ChatMessage): boolean {
   if (msg.role === 'user') return true;
+  // Filter out NO_REPLY messages (internal agent responses)
+  if (msg.role === 'assistant' && isNoReply(msg)) return false;
   if (msg.blocks.length === 0) return !!msg.content;
   // Show all assistant messages — tool-only ones render as compact inline
   return msg.blocks.some(b =>

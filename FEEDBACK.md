@@ -6,10 +6,15 @@
 - **Status:** done
 - **Completed:** 2026-02-11 — commit `d58c34f`
 - **Description:** Migrer le projet de "ClawChat" vers "PinchChat"
-  - Renommer le repo GitHub : MarlBurroW/clawchat → MarlBurroW/pinchchat
-    - ⚠️ Le rename de repo se fait via `gh api -X PATCH /repos/MarlBurroW/clawchat -f name=pinchchat`
-  - Mettre à jour tous les fichiers : README, CONTRIBUTING, package.json, title HTML, composants, etc.
-  - Remplacer toutes les occurrences de "ClawChat" / "clawchat" par "PinchChat" / "pinchchat"
-  - Mettre à jour le dossier local : `mv ~/clawchat ~/pinchchat` (et adapter le cron)
-  - Vérifier que le build passe après migration
-  - Commit + push
+
+## Item #2
+- **Date:** 2026-02-11
+- **Priority:** high
+- **Status:** pending
+- **Description:** Filtrer les messages "NO_REPLY" — ne pas afficher les messages dont le contenu est exactement "NO_REPLY" (ce sont des réponses internes de l'agent qui ne doivent pas être visibles dans le chat)
+
+## Item #3
+- **Date:** 2026-02-11
+- **Priority:** medium
+- **Status:** pending
+- **Description:** Ajouter le support i18n (internationalisation) — le projet open-source est en anglais, mais le deploy perso de Nicolas doit rester en français. Soit via une config `.env` (ex: `VITE_LOCALE=fr`), soit via un système de traduction léger. Les strings UI (placeholder input, bouton envoyer, statut connexion, etc.) doivent être configurables.
