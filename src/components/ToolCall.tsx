@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { ChevronRight, ChevronDown, Terminal, Globe, Search, FileText, Wrench, Code, Database, Image, MessageSquare, Brain, Cpu } from 'lucide-react';
+import { ChevronRight, ChevronDown } from 'lucide-react';
 import hljs from 'highlight.js/lib/common';
 import { useT } from '../hooks/useLocale';
 import { ImageBlock } from './ImageBlock';
@@ -31,29 +31,39 @@ function getColor(name: string): ToolColor {
   return toolColors[name] || defaultColor;
 }
 
-const toolIcons: Record<string, React.ReactNode> = {
-  exec: <Terminal size={13} />,
-  web_search: <Globe size={13} />,
-  web_fetch: <Globe size={13} />,
-  search: <Search size={13} />,
-  Read: <FileText size={13} />,
-  read: <FileText size={13} />,
-  Write: <Code size={13} />,
-  write: <Code size={13} />,
-  Edit: <Code size={13} />,
-  edit: <Code size={13} />,
-  browser: <Globe size={13} />,
-  image: <Image size={13} />,
-  message: <MessageSquare size={13} />,
-  database: <Database size={13} />,
-  memory_search: <Brain size={13} />,
-  memory_get: <Brain size={13} />,
-  cron: <Cpu size={13} />,
-  sessions_spawn: <Cpu size={13} />,
+const toolEmojis: Record<string, string> = {
+  exec: '⚡',
+  web_search: '🔍',
+  web_fetch: '🌐',
+  search: '🔍',
+  Read: '📖',
+  read: '📖',
+  Write: '✏️',
+  write: '✏️',
+  Edit: '✏️',
+  edit: '✏️',
+  browser: '🌐',
+  image: '🖼️',
+  message: '💬',
+  database: '🗄️',
+  memory_search: '🧠',
+  memory_get: '🧠',
+  cron: '⏰',
+  sessions_spawn: '🚀',
+  sessions_send: '📨',
+  sessions_list: '📋',
+  sessions_history: '📜',
+  session_status: '📊',
+  tts: '🔊',
+  gateway: '⚙️',
+  canvas: '🎨',
+  nodes: '📡',
+  process: '⚙️',
+  voice_call: '📞',
 };
 
-function getToolIcon(name: string) {
-  return toolIcons[name] || <Wrench size={13} />;
+function getToolEmoji(name: string): string {
+  return toolEmojis[name] || '🔧';
 }
 
 function truncateResult(result: string, maxLen = 120): string {
@@ -189,7 +199,7 @@ export function ToolCall({ name, input, result }: { name: string; input?: any; r
         onClick={() => setOpen(!open)}
         className={`inline-flex items-center gap-1.5 rounded-2xl border ${c.border} ${c.bg} ${c.glow} px-3 py-1.5 text-xs ${c.text} hover:brightness-125 transition-all max-w-full`}
       >
-        <span className={c.icon}>{getToolIcon(name)}</span>
+        <span className="text-[13px] leading-none">{getToolEmoji(name)}</span>
         <span className="font-mono font-semibold shrink-0">{name}</span>
         {hint && <span className="opacity-60 truncate font-mono text-[11px]">{hint}</span>}
         {open ? <ChevronDown size={12} className="ml-1 opacity-60" /> : <ChevronRight size={12} className="ml-1 opacity-60" />}
