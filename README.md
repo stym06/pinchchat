@@ -16,15 +16,14 @@
 
 ## ✨ Features
 
-- 🌑 **Dark neon theme** — easy on the eyes, built with Tailwind CSS v4
-- 📊 **Token progress bars** — track token usage per session in real-time
-- 🔧 **Tool call badges** — expandable panels with syntax-highlighted JSON
-- 📋 **Session sidebar** — browse active sessions with live activity indicators
-- 📝 **Markdown rendering** — full GFM support with code highlighting
-- 📎 **File upload** — attach files to your messages
-- ⚡ **Streaming responses** — watch the AI think in real-time
-- 🔐 **Runtime login** — enter gateway credentials at runtime, no secrets in the build
-- 🌐 **i18n support** — English and French, configurable via `VITE_LOCALE`
+- 🔧 **Tool call visualization** — see what your agent is doing in real-time: colored badges, visible parameters, expandable results. The killer feature missing from every other chat UI.
+- 💬 **GPT-like interface** — sessions in a sidebar, switch between conversations. Familiar if you've used ChatGPT or Claude.
+- 📋 **Multi-session navigation** — browse all active sessions including cron jobs, sub-agents, and background tasks
+- ⚡ **Live streaming** — watch the agent think and write token by token
+- 📊 **Token usage tracking** — progress bars per session so you know how much context is left
+- 🖼️ **Inline images** — generated or read images render directly in chat with lightbox preview
+- 🎯 **Chat-focused** — no settings menus or config panels cluttering the screen. Just the conversation.
+- 🌐 **i18n** — English and French built-in, easy to extend
 
 ## 🚀 Quick Start
 

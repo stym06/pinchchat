@@ -1,5 +1,30 @@
 # FEEDBACK.md — PinchChat Feedback Queue
 
+## Item #11
+- **Date:** 2026-02-11
+- **Priority:** high
+- **Status:** in-progress
+- **Description:** Rewrite des features — README + GitHub Pages landing page
+  - Les features actuelles sont mal vendues. Trop techniques, pas assez pragmatiques.
+  - **Ce qu'il ne faut PAS vendre comme feature :**
+    - "Dark neon theme" — on s'en fiche, c'est un choix esthétique pas une feature
+    - "Runtime auth / token not in build" — c'est normal, pas un argument de vente
+    - "Markdown rendering" — tous les chats font ça
+    - "File upload" — basique
+  - **Ce qu'il FAUT mettre en avant (la vraie valeur ajoutée vs l'UI native OpenClaw) :**
+    - **Visualisation des tool calls** — comprendre ce que l'agent fait en temps réel avec des badges colorés, paramètres visibles, résultats expandables. C'est LA killer feature.
+    - **Interface GPT-like** — sessions dans une sidebar, switch entre conversations, familier pour les utilisateurs de ChatGPT/Claude
+    - **Focalisé sur le chat** — pas de menus settings/config partout, juste le chat, clean et efficace
+    - **Token usage en temps réel** — barres de progression par session, savoir combien de contexte il reste
+    - **Multi-session** — voir et naviguer entre toutes les sessions actives (crons, sub-agents, etc.)
+    - **Streaming live** — voir l'agent réfléchir et écrire en temps réel
+    - **Images inline** — voir les images générées/lues directement dans le chat
+    - **i18n** — EN/FR switchable
+  - Réécrire la section Features du README avec des descriptions courtes et percutantes
+  - Réécrire les feature cards de la landing page (docs/index.html) de la même manière
+  - Ordre : les features les plus différenciantes en premier
+  - Ton : pragmatique, pas marketing bullshit
+
 ## Item #1
 - **Date:** 2026-02-11
 - **Priority:** high
