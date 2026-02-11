@@ -231,6 +231,13 @@ export function useGateway() {
               for (const block of m.content) {
                 if (block.type === 'text') blocks.push({ type: 'text', text: block.text });
                 else if (block.type === 'thinking') blocks.push({ type: 'thinking', text: block.thinking || block.text || '' });
+                else if (block.type === 'image') {
+                  const src = block.source || {};
+                  blocks.push({ type: 'image', mediaType: src.media_type || block.media_type || 'image/png', data: src.data || block.data, url: block.url || src.url });
+                }
+                else if (block.type === 'image_url') {
+                  blocks.push({ type: 'image', mediaType: 'image/png', url: block.image_url?.url || block.url });
+                }
                 else if (block.type === 'tool_use') blocks.push({ type: 'tool_use', name: block.name, input: block.input, id: block.id });
                 else if (block.type === 'tool_result') blocks.push({ type: 'tool_result', content: typeof block.content === 'string' ? block.content : JSON.stringify(block.content, null, 2), toolUseId: block.tool_use_id });
                 else if (block.type === 'toolCall') blocks.push({ type: 'tool_use', name: block.name, input: block.arguments || block.input, id: block.id });

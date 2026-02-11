@@ -6,6 +6,7 @@ import type { ChatMessage as ChatMessageType, MessageBlock } from '../types';
 import { ThinkingBlock } from './ThinkingBlock';
 import { CodeBlock } from './CodeBlock';
 import { ToolCall } from './ToolCall';
+import { ImageBlock, buildImageSrc } from './ImageBlock';
 import { Bot, User, Wrench } from 'lucide-react';
 import { t, getLocale } from '../lib/i18n';
 import { useLocale } from '../hooks/useLocale';
@@ -127,11 +128,19 @@ function getTextBlocks(blocks: MessageBlock[]): MessageBlock[] {
   return blocks.filter(b => b.type === 'text' && b.text.trim());
 }
 
+function getImageBlocks(blocks: MessageBlock[]): MessageBlock[] {
+  return blocks.filter(b => b.type === 'image');
+}
+
 function getInternalBlocks(blocks: MessageBlock[]): MessageBlock[] {
   return blocks.filter(b => b.type === 'thinking' || b.type === 'tool_use' || b.type === 'tool_result');
 }
 
-const markdownComponents = { pre: CodeBlock };
+function MarkdownImage(props: React.ImgHTMLAttributes<HTMLImageElement>) {
+  return <ImageBlock src={props.src || ''} alt={props.alt} />;
+}
+
+const markdownComponents = { pre: CodeBlock, img: MarkdownImage };
 
 function renderTextBlocks(blocks: MessageBlock[]) {
   return getTextBlocks(blocks).map((block, i) => (
@@ -141,6 +150,15 @@ function renderTextBlocks(blocks: MessageBlock[]) {
       </ReactMarkdown>
     </div>
   ));
+}
+
+function renderImageBlocks(blocks: MessageBlock[]) {
+  return getImageBlocks(blocks).map((block, i) => {
+    const b = block as { type: 'image'; mediaType: string; data?: string; url?: string };
+    const src = buildImageSrc(b.mediaType, b.data, b.url);
+    if (!src) return null;
+    return <ImageBlock key={`img-${i}`} src={src} alt="Image" />;
+  });
 }
 
 function renderInternalBlocks(blocks: MessageBlock[]) {
@@ -201,7 +219,8 @@ export function ChatMessageComponent({ message }: { message: ChatMessageType }) 
   // Assistant message with no text content — only tool calls / thinking
   if (!isUser && message.blocks.length > 0) {
     const textBlocks = getTextBlocks(message.blocks);
-    const hasText = textBlocks.length > 0 || (message.isStreaming && message.content?.trim());
+    const imageBlocks = getImageBlocks(message.blocks);
+    const hasText = textBlocks.length > 0 || imageBlocks.length > 0 || (message.isStreaming && message.content?.trim());
     if (!hasText && !message.isStreaming) {
       return <InternalOnlyMessage message={message} />;
     }
@@ -232,6 +251,9 @@ export function ChatMessageComponent({ message }: { message: ChatMessageType }) 
               </ReactMarkdown>
             </div>
           )}
+
+          {/* Inline images */}
+          {renderImageBlocks(message.blocks)}
 
           {/* Streaming dots */}
           {message.isStreaming && (

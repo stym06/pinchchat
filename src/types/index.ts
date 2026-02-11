@@ -12,7 +12,8 @@ export type MessageBlock =
   | { type: 'text'; text: string }
   | { type: 'thinking'; text: string }
   | { type: 'tool_use'; name: string; input: any; id?: string }
-  | { type: 'tool_result'; content: string; toolUseId?: string; name?: string };
+  | { type: 'tool_result'; content: string; toolUseId?: string; name?: string }
+  | { type: 'image'; mediaType: string; data?: string; url?: string };
 
 export interface Session {
   key: string;

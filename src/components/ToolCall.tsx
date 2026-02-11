@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { ChevronRight, ChevronDown, Terminal, Globe, Search, FileText, Wrench, Code, Database, Image, MessageSquare, Brain, Cpu } from 'lucide-react';
 import hljs from 'highlight.js/lib/common';
 import { useT } from '../hooks/useLocale';
+import { ImageBlock } from './ImageBlock';
 
 type ToolColor = { border: string; bg: string; text: string; icon: string; glow: string; expandBorder: string; expandBg: string };
 
@@ -148,6 +149,31 @@ function truncate(s: string, max: number): string {
   return clean.length <= max ? clean : clean.slice(0, max) + '…';
 }
 
+/** Detect if a tool result contains a base64 image and extract it */
+function extractImageFromResult(result: string): { src: string; remaining: string } | null {
+  if (!result) return null;
+  // Match "data:image/..." URLs
+  const dataUrlMatch = result.match(/(data:image\/[a-z+]+;base64,[A-Za-z0-9+/=\s]+)/);
+  if (dataUrlMatch) {
+    const src = dataUrlMatch[1].replace(/\s/g, '');
+    const remaining = result.replace(dataUrlMatch[0], '').trim();
+    return { src, remaining };
+  }
+  // Match raw base64 after image file markers (e.g. from Read tool returning an image)
+  const readImageMatch = result.match(/^.*?\[image\/(png|jpeg|jpg|gif|webp)\].*$/m);
+  if (readImageMatch) {
+    const mediaType = `image/${readImageMatch[1]}`;
+    // Look for a large base64 block after it
+    const afterMarker = result.slice(result.indexOf(readImageMatch[0]) + readImageMatch[0].length);
+    const b64Match = afterMarker.match(/([A-Za-z0-9+/=\n]{100,})/);
+    if (b64Match) {
+      const data = b64Match[1].replace(/\n/g, '');
+      return { src: `data:${mediaType};base64,${data}`, remaining: readImageMatch[0] };
+    }
+  }
+  return null;
+}
+
 export function ToolCall({ name, input, result }: { name: string; input?: any; result?: string }) {
   const t = useT();
   const [open, setOpen] = useState(false);
@@ -188,15 +214,30 @@ export function ToolCall({ name, input, result }: { name: string; input?: any; r
               />
             </div>
           )}
-          {result && (
-            <div>
-              <div className={`text-[11px] ${c.text} opacity-70 mb-1 font-medium`}>{t('tool.result')}</div>
-              <HighlightedPre
-                text={result}
-                className="text-xs bg-[#1a1a20]/60 border border-white/5 p-2.5 rounded-xl overflow-x-auto text-zinc-300 max-h-64 overflow-y-auto font-mono"
-              />
-            </div>
-          )}
+          {result && (() => {
+            const imageData = extractImageFromResult(result);
+            return (
+              <div>
+                <div className={`text-[11px] ${c.text} opacity-70 mb-1 font-medium`}>{t('tool.result')}</div>
+                {imageData ? (
+                  <>
+                    {imageData.remaining && (
+                      <HighlightedPre
+                        text={imageData.remaining}
+                        className="text-xs bg-[#1a1a20]/60 border border-white/5 p-2.5 rounded-xl overflow-x-auto text-zinc-300 font-mono mb-2"
+                      />
+                    )}
+                    <ImageBlock src={imageData.src} alt={`${name} result`} />
+                  </>
+                ) : (
+                  <HighlightedPre
+                    text={result}
+                    className="text-xs bg-[#1a1a20]/60 border border-white/5 p-2.5 rounded-xl overflow-x-auto text-zinc-300 max-h-64 overflow-y-auto font-mono"
+                  />
+                )}
+              </div>
+            );
+          })()}
         </div>
       )}
     </div>

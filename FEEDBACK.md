@@ -38,7 +38,8 @@
 ## Item #6
 - **Date:** 2026-02-11
 - **Priority:** high
-- **Status:** pending
+- **Status:** done
+- **Completed:** 2026-02-11 — commit `5fd7300`
 - **Description:** Installation simplifiée — Docker + oneliner
   - **Dockerfile** : image légère (nginx:alpine ou similar) qui sert le build statique. Multi-stage : node pour build, nginx pour serve. Pas de secrets dans l'image (tout est runtime via le login screen).
   - **docker-compose.yml** : exemple simple avec juste le container PinchChat
@@ -87,3 +88,12 @@
   - URL : `https://marlburrow.github.io/pinchchat/`
   - Ajouter un lien "Website" dans les settings du repo GitHub
   - Ajouter le workflow GitHub Actions pour déployer automatiquement
+
+## Item #10
+- **Date:** 2026-02-11
+- **Priority:** medium
+- **Status:** pending
+- **Description:** Remplacer le diagramme d'architecture ASCII art dans le README par un diagramme Mermaid
+  - GitHub rend nativement les blocs ```mermaid dans les README
+  - Utiliser un flowchart ou graph LR/TD montrant : Browser → WebSocket → OpenClaw Gateway → LLM Provider, avec les composants internes (LoginScreen, Chat, Sidebar, Gateway client, etc.)
+  - Plus lisible et maintenable que l'ASCII art
