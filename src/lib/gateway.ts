@@ -24,6 +24,7 @@ export class GatewayClient {
   private eventHandlers: GatewayEventHandler[] = [];
   private _onStatus: (s: 'disconnected' | 'connecting' | 'connected') => void = () => {};
   private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+  private reconnectAttempts = 0;
   private connected = false;
   private autoReconnect = true;
 
@@ -109,6 +110,7 @@ export class GatewayClient {
     }).then((res) => {
       console.log('[GW] connected!', res);
       this.connected = true;
+      this.reconnectAttempts = 0;
       this._onStatus('connected');
     }).catch((err) => {
       console.log('[GW] connect failed:', err);
@@ -119,14 +121,20 @@ export class GatewayClient {
 
   private scheduleReconnect() {
     if (this.reconnectTimer) return;
+    const base = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 30000);
+    const jitter = Math.random() * base * 0.3;
+    const delay = base + jitter;
+    this.reconnectAttempts++;
+    console.log(`[GW] reconnecting in ${Math.round(delay)}ms (attempt ${this.reconnectAttempts})`);
     this.reconnectTimer = setTimeout(() => {
       this.reconnectTimer = null;
       this.connect();
-    }, 3000);
+    }, delay);
   }
 
   disconnect() {
     this.autoReconnect = false;
+    this.reconnectAttempts = 0;
     if (this.reconnectTimer) { clearTimeout(this.reconnectTimer); this.reconnectTimer = null; }
     if (this.ws) { this.ws.close(); this.ws = null; }
     this.connected = false;
