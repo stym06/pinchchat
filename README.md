@@ -1,6 +1,6 @@
 # 🦞 ClawChat
 
-**A sleek, dark-themed webchat UI for [OpenClaw](https://github.com/MarlBurroW/openclaw) — monitor sessions, stream responses, and inspect tool calls in real-time.**
+**A sleek, dark-themed webchat UI for [OpenClaw](https://github.com/openclaw/openclaw) — monitor sessions, stream responses, and inspect tool calls in real-time.**
 
 ![ClawChat Screenshot](https://via.placeholder.com/800x450?text=ClawChat+Screenshot)
 
@@ -75,4 +75,4 @@ Or serve the `dist/` folder with nginx, Caddy, or any static file server.
 
 ## 🔗 Links
 
-- [OpenClaw](https://github.com/MarlBurroW/openclaw) — the AI agent platform ClawChat connects to
+- [OpenClaw](https://github.com/openclaw/openclaw) — the AI agent platform ClawChat connects to
