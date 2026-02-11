@@ -61,7 +61,8 @@
 ## Item #8
 - **Date:** 2026-02-11
 - **Priority:** high
-- **Status:** in-progress
+- **Status:** done
+- **Completed:** 2026-02-11 — commit `97c16be`
 - **Description:** Intégrer le logo PinchChat
   - Le logo est déjà dans `public/logo.png`
   - L'utiliser comme favicon (générer les tailles appropriées ou utiliser le PNG directement)
