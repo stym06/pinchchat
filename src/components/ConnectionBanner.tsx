@@ -12,7 +12,7 @@ type BannerState = 'hidden' | 'reconnecting' | 'reconnected';
 export function ConnectionBanner({ status }: Props) {
   const t = useT();
   const [banner, setBanner] = useState<BannerState>('hidden');
-  const prevStatus = useRef(status);
+  const prevStatus = useRef<ConnectionStatus | null>(null);
   const dismissTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -25,16 +25,12 @@ export function ConnectionBanner({ status }: Props) {
     }
 
     if (status === 'disconnected' || status === 'connecting') {
-      // Only show reconnecting if we were previously connected (not initial load)
       if (prev === 'connected') {
         setBanner('reconnecting');
       }
-    } else if (status === 'connected' && prev !== 'connected') {
-      // Just reconnected — flash success only if we were showing the banner
-      if (banner === 'reconnecting' || prev === 'disconnected' || prev === 'connecting') {
-        setBanner('reconnected');
-        dismissTimer.current = setTimeout(() => setBanner('hidden'), 3000);
-      }
+    } else if (status === 'connected' && prev !== null && prev !== 'connected') {
+      setBanner('reconnected');
+      dismissTimer.current = setTimeout(() => setBanner('hidden'), 3000);
     }
 
     return () => {

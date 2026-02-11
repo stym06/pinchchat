@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Sparkles, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { useT } from '../hooks/useLocale';
+import { getStoredCredentials } from '../lib/credentials';
 
 interface Props {
   onConnect: (url: string, token: string) => void;
@@ -8,40 +9,22 @@ interface Props {
   isConnecting?: boolean;
 }
 
-const STORAGE_KEY = 'pinchchat_credentials';
-
-export function getStoredCredentials(): { url: string; token: string } | null {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw);
-    if (parsed.url && parsed.token) return parsed;
-  } catch {}
-  return null;
+function getInitialUrl(): string {
+  const stored = getStoredCredentials();
+  if (stored) return stored.url;
+  return import.meta.env.VITE_GATEWAY_WS_URL || `ws://${window.location.hostname}:18789`;
 }
 
-export function storeCredentials(url: string, token: string) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify({ url, token }));
-}
-
-export function clearCredentials() {
-  localStorage.removeItem(STORAGE_KEY);
+function getInitialToken(): string {
+  const stored = getStoredCredentials();
+  return stored?.token ?? '';
 }
 
 export function LoginScreen({ onConnect, error, isConnecting }: Props) {
   const t = useT();
-  const defaultUrl = import.meta.env.VITE_GATEWAY_WS_URL || `ws://${window.location.hostname}:18789`;
-  const [url, setUrl] = useState(defaultUrl);
-  const [token, setToken] = useState('');
+  const [url, setUrl] = useState(getInitialUrl);
+  const [token, setToken] = useState(getInitialToken);
   const [showToken, setShowToken] = useState(false);
-
-  useEffect(() => {
-    const stored = getStoredCredentials();
-    if (stored) {
-      setUrl(stored.url);
-      setToken(stored.token);
-    }
-  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
