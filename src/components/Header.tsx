@@ -66,11 +66,12 @@ export function Header({ status, sessionKey, onToggleSidebar, activeSessionData,
         const total = activeSessionData?.totalTokens || 0;
         if (!ctx) return null;
         const pct = Math.min(100, (total / ctx) * 100);
-        const barColor = pct > 95 ? 'bg-red-500' : pct > 80 ? 'bg-amber-500' : 'bg-gradient-to-r from-cyan-400 to-violet-500';
+        const opacity = Math.max(0.35, Math.min(1, pct / 100));
+        const barStyle = { width: `${pct}%`, backgroundColor: `rgba(56, 189, 248, ${opacity})` };
         return (
           <div className="px-4 py-1.5 bg-[#232329]/60 border-b border-white/8 flex items-center gap-3">
             <div className="flex-1 h-[5px] rounded-full bg-white/5 overflow-hidden">
-              <div className={`h-full rounded-full transition-all duration-500 ${barColor}`} style={{ width: `${pct}%` }} />
+              <div className="h-full rounded-full transition-all duration-500" style={barStyle} />
             </div>
             <span className="text-[11px] text-zinc-400 tabular-nums shrink-0 whitespace-nowrap">
               {(total / 1000).toFixed(1)}k / {(ctx / 1000).toFixed(0)}k tokens

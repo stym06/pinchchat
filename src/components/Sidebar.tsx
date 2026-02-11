@@ -120,11 +120,12 @@ export function Sidebar({ sessions, activeSession, onSwitch, open, onClose }: Pr
                   {(() => {
                     if (!s.contextTokens) return null;
                     const pct = Math.min(100, ((s.totalTokens || 0) / s.contextTokens) * 100);
-                    const barColor = pct > 95 ? 'bg-red-500' : pct > 80 ? 'bg-amber-500' : 'bg-gradient-to-r from-cyan-400 to-violet-500';
+                    const barOpacity = Math.max(0.35, Math.min(1, pct / 100));
+                    const barStyle = { width: `${pct}%`, backgroundColor: `rgba(56, 189, 248, ${barOpacity})` };
                     return (
                       <div className="flex items-center gap-1.5 mt-1">
                         <div className="flex-1 h-[3px] rounded-full bg-white/5 overflow-hidden">
-                          <div className={`h-full rounded-full ${barColor}`} style={{ width: `${pct}%` }} />
+                          <div className="h-full rounded-full" style={barStyle} />
                         </div>
                         <span className="text-[9px] text-zinc-500 tabular-nums shrink-0">{Math.round(pct)}%</span>
                       </div>
