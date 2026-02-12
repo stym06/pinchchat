@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, useEffect } from 'react';
+import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import { X, Sparkles, Search } from 'lucide-react';
 import type { Session } from '../types';
 import { useT } from '../hooks/useLocale';
@@ -31,8 +31,10 @@ export function Sidebar({ sessions, activeSession, onSwitch, open, onClose }: Pr
     return () => window.removeEventListener('keydown', handler);
   }, []);
 
-  // Reset focus index when filter changes
-  useEffect(() => { setFocusIdx(-1); }, [filter]);
+  const updateFilter = useCallback((value: string) => {
+    setFilter(value);
+    setFocusIdx(-1);
+  }, []);
 
   const filtered = useMemo(() => {
     if (!filter.trim()) return sessions;
@@ -70,14 +72,14 @@ export function Sidebar({ sessions, activeSession, onSwitch, open, onClose }: Pr
                 ref={searchRef}
                 type="text"
                 value={filter}
-                onChange={e => setFilter(e.target.value)}
+                onChange={e => updateFilter(e.target.value)}
                 placeholder={t('sidebar.search')}
                 aria-label={t('sidebar.search')}
                 className="w-full pl-8 pr-3 py-1.5 rounded-xl border border-white/8 bg-zinc-800/30 text-xs text-zinc-300 placeholder:text-zinc-500 outline-none focus:ring-1 focus:ring-cyan-400/30 transition-all"
               />
               {filter && (
                 <button
-                  onClick={() => setFilter('')}
+                  onClick={() => updateFilter('')}
                   className="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300"
                 >
                   <X size={12} />
