@@ -137,11 +137,12 @@ export function Sidebar({ sessions, activeSession, onSwitch, open, onClose }: Pr
             );
           })}
         </div>
-        {/* Footer glow dots */}
+        {/* Footer with version */}
         <div className="px-4 py-3 border-t border-white/8 flex items-center justify-center gap-2">
           <span className="h-1.5 w-1.5 rounded-full bg-violet-300/60 shadow-[0_0_10px_rgba(168,85,247,0.5)]" />
           <span className="h-1.5 w-1.5 rounded-full bg-cyan-300/60 shadow-[0_0_10px_rgba(34,211,238,0.5)]" />
           <span className="h-1.5 w-1.5 rounded-full bg-indigo-300/50 shadow-[0_0_10px_rgba(99,102,241,0.4)]" />
+          <span className="ml-1 text-[9px] text-zinc-600 select-all" title={`PinchChat v${__APP_VERSION__}`}>v{__APP_VERSION__}</span>
         </div>
       </aside>
     </>

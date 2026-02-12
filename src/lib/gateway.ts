@@ -98,7 +98,7 @@ export class GatewayClient {
     this.request(id, 'connect', {
       minProtocol: 3,
       maxProtocol: 3,
-      client: { id: 'webchat', version: '1.0.0', platform: 'web', mode: 'webchat' },
+      client: { id: 'webchat', version: __APP_VERSION__, platform: 'web', mode: 'webchat' },
       role: 'operator',
       scopes: ['operator.read', 'operator.write'],
       caps: [],
@@ -106,7 +106,7 @@ export class GatewayClient {
       permissions: {},
       auth: { token: this.authToken },
       locale: navigator.language || 'en',
-      userAgent: 'pinchchat/1.0.0',
+      userAgent: `pinchchat/${__APP_VERSION__}`,
     }).then((res) => {
       console.log('[GW] connected!', res);
       this.connected = true;
