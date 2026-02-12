@@ -125,6 +125,40 @@ graph TD
 4. **Messages** — Messages stream in via WebSocket frames; the hook assembles partial chunks into complete messages
 5. **Send** — User input (+ optional file attachments) is sent as a JSON frame over the WebSocket
 
+## 🌐 Adding a Language
+
+PinchChat uses a zero-dependency i18n system. Adding a new language takes ~5 minutes:
+
+1. **Open `src/lib/i18n.ts`** and duplicate the `en` object with your locale code:
+
+```ts
+const de: typeof en = {
+  'login.title': 'PinchChat',
+  'login.subtitle': 'Verbinde dich mit deinem OpenClaw-Gateway',
+  // ... translate all keys
+};
+```
+
+2. **Register it** in the `messages` record (same file):
+
+```ts
+const messages: Record<string, typeof en> = { en, fr, de };
+```
+
+3. **Add a label** for the language selector:
+
+```ts
+export const localeLabels: Record<string, string> = {
+  en: 'EN',
+  fr: 'FR',
+  de: 'DE',
+};
+```
+
+4. **Done.** The language selector, `VITE_LOCALE`, and browser auto-detection all pick it up automatically.
+
+> **Tip:** TypeScript enforces that your new locale object has the same keys as `en` — missing translations won't compile.
+
 ## 🛠 Tech Stack
 
 - [React](https://react.dev/) 19
