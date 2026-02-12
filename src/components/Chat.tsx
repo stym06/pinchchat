@@ -3,13 +3,14 @@ import { ChatMessageComponent } from './ChatMessage';
 import { ChatInput } from './ChatInput';
 import { TypingIndicator } from './TypingIndicator';
 import type { ChatMessage, ConnectionStatus } from '../types';
-import { Bot, ArrowDown } from 'lucide-react';
+import { Bot, ArrowDown, Loader2 } from 'lucide-react';
 import { useT } from '../hooks/useLocale';
 import { getLocale, type TranslationKey } from '../lib/i18n';
 
 interface Props {
   messages: ChatMessage[];
   isGenerating: boolean;
+  isLoadingHistory: boolean;
   status: ConnectionStatus;
   onSend: (text: string, attachments?: Array<{ mimeType: string; fileName: string; content: string }>) => void;
   onAbort: () => void;
@@ -63,7 +64,7 @@ function getDateKey(ts: number): string {
 /** Threshold in pixels — if the user is within this distance of the bottom, auto-scroll */
 const SCROLL_THRESHOLD = 150;
 
-export function Chat({ messages, isGenerating, status, onSend, onAbort }: Props) {
+export function Chat({ messages, isGenerating, isLoadingHistory, status, onSend, onAbort }: Props) {
   const t = useT();
   const bottomRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -128,7 +129,13 @@ export function Chat({ messages, isGenerating, status, onSend, onAbort }: Props)
     <div className="flex-1 flex flex-col min-h-0 relative">
       <div ref={scrollContainerRef} className="flex-1 overflow-y-auto relative" role="log" aria-label={t('chat.messages')} aria-live="polite">
         <div className="max-w-4xl mx-auto py-4">
-          {messages.length === 0 && (
+          {messages.length === 0 && isLoadingHistory && (
+            <div className="flex flex-col items-center justify-center h-[60vh] text-zinc-500">
+              <Loader2 className="h-8 w-8 text-cyan-300/60 animate-spin mb-4" />
+              <div className="text-sm text-zinc-500">{t('chat.loadingHistory')}</div>
+            </div>
+          )}
+          {messages.length === 0 && !isLoadingHistory && (
             <div className="flex flex-col items-center justify-center h-[60vh] text-zinc-500">
               <div className="relative mb-6">
                 <div className="absolute -inset-4 rounded-3xl bg-gradient-to-r from-cyan-400/10 via-indigo-500/10 to-violet-500/10 blur-2xl" />

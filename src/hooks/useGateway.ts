@@ -28,6 +28,7 @@ export function useGateway() {
   const [sessions, setSessions] = useState<Session[]>([]);
   const [activeSession, setActiveSession] = useState('agent:main:main');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const [authenticated, setAuthenticated] = useState<boolean | null>(null); // null = checking
   const [connectError, setConnectError] = useState<string | null>(null);
   const [isConnecting, setIsConnecting] = useState(false);
@@ -100,6 +101,7 @@ export function useGateway() {
   }, []);
 
   const loadHistory = useCallback(async (sessionKey: string) => {
+    setIsLoadingHistory(true);
     try {
       const res = await clientRef.current?.send('chat.history', { sessionKey, limit: 100 });
       const rawMsgs = res?.messages as Array<Record<string, unknown>> | undefined;
@@ -173,6 +175,8 @@ export function useGateway() {
       }
     } catch {
       // Silently ignore history load failures
+    } finally {
+      setIsLoadingHistory(false);
     }
   }, []);
 
@@ -388,7 +392,7 @@ export function useGateway() {
   }));
 
   return {
-    status, messages, sessions: enrichedSessions, activeSession, isGenerating,
+    status, messages, sessions: enrichedSessions, activeSession, isGenerating, isLoadingHistory,
     sendMessage, abort, switchSession, loadSessions,
     authenticated, login, logout, connectError, isConnecting,
   };

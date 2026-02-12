@@ -31,6 +31,7 @@ const en = {
   // Chat
   'chat.welcome': 'PinchChat',
   'chat.welcomeSub': 'Send a message to get started',
+  'chat.loadingHistory': 'Loading messages…',
   'chat.inputPlaceholder': 'Type a message…',
   'chat.inputLabel': 'Message',
   'chat.attachFile': 'Attach file',
@@ -106,6 +107,7 @@ const fr: Record<keyof typeof en, string> = {
 
   'chat.welcome': 'PinchChat',
   'chat.welcomeSub': 'Envoyez un message pour commencer',
+  'chat.loadingHistory': 'Chargement des messages…',
   'chat.inputPlaceholder': 'Tapez un message…',
   'chat.inputLabel': 'Message',
   'chat.attachFile': 'Joindre un fichier',

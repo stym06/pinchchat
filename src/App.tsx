@@ -10,7 +10,7 @@ import { KeyboardShortcuts } from './components/KeyboardShortcuts';
 
 export default function App() {
   const {
-    status, messages, sessions, activeSession, isGenerating,
+    status, messages, sessions, activeSession, isGenerating, isLoadingHistory,
     sendMessage, abort, switchSession,
     authenticated, login, logout, connectError, isConnecting,
   } = useGateway();
@@ -77,7 +77,7 @@ export default function App() {
       <div className="flex-1 flex flex-col min-w-0" aria-hidden={sidebarOpen ? true : undefined}>
         <Header status={status} sessionKey={activeSession} onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} activeSessionData={sessions.find(s => s.key === activeSession)} onLogout={logout} />
         <ConnectionBanner status={status} />
-        <Chat messages={messages} isGenerating={isGenerating} status={status} onSend={sendMessage} onAbort={abort} />
+        <Chat messages={messages} isGenerating={isGenerating} isLoadingHistory={isLoadingHistory} status={status} onSend={sendMessage} onAbort={abort} />
       </div>
       <KeyboardShortcuts open={shortcutsOpen} onClose={() => setShortcutsOpen(false)} />
     </div>
