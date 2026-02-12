@@ -30,15 +30,7 @@ export function Header({ status, sessionKey, onToggleSidebar, activeSessionData,
             <span className="font-semibold text-zinc-300 text-sm tracking-wide">{t('header.title')}</span>
             <Sparkles className="h-3.5 w-3.5 text-cyan-300/60" />
           </div>
-          <div className="flex items-center gap-2 min-w-0">
-            <span className="text-xs text-zinc-500 truncate">{sessionLabel}</span>
-            {activeSessionData?.model && (
-              <span className="inline-flex items-center gap-1 text-[10px] text-zinc-500 bg-white/5 rounded-full px-2 py-0.5 shrink-0" title={`Model: ${activeSessionData.model}${activeSessionData.agentId ? ` · Agent: ${activeSessionData.agentId}` : ''}`}>
-                <Cpu className="h-2.5 w-2.5" />
-                <span className="truncate max-w-[120px]">{activeSessionData.model.replace(/^.*\//, '')}</span>
-              </span>
-            )}
-          </div>
+          <span className="text-xs text-zinc-500 truncate">{sessionLabel}</span>
         </div>
       </div>
       <div className="flex items-center gap-2 text-sm">
@@ -90,6 +82,12 @@ export function Header({ status, sessionKey, onToggleSidebar, activeSessionData,
         const barStyle = { width: `${pct}%`, backgroundColor: `rgba(56, 189, 248, ${opacity})` };
         return (
           <div className="px-4 py-1.5 bg-[#232329]/60 border-b border-white/8 flex items-center gap-3">
+            {activeSessionData?.model && (
+              <span className="inline-flex items-center gap-1 text-[10px] text-zinc-500 shrink-0" title={`Model: ${activeSessionData.model}${activeSessionData.agentId ? ` · Agent: ${activeSessionData.agentId}` : ''}`}>
+                <Cpu className="h-2.5 w-2.5" />
+                <span className="truncate max-w-[120px]">{activeSessionData.model.replace(/^.*\//, '')}</span>
+              </span>
+            )}
             <div className="flex-1 h-[5px] rounded-full bg-white/5 overflow-hidden">
               <div className="h-full rounded-full transition-all duration-500" style={barStyle} />
             </div>

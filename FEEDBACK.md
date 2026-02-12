@@ -209,3 +209,14 @@
   - If the gateway doesn't expose this info via WebSocket, check if there's another endpoint or if it can be inferred from the session key
   - Keep it subtle/non-intrusive — small text or an info icon that reveals details on hover
   - This helps users know which agent/model is handling their conversation
+
+## Item #25
+- **Date:** 2026-02-12
+- **Priority:** high
+- **Status:** pending
+- **Description:** Move model badge from header to left of token progress bar
+- **Details:**
+  - Currently the model chip is in the navbar/header — too cramped on mobile
+  - Move it to the left of the token usage progress bar instead
+  - Should be subtle, same style as surrounding elements
+  - Remove it from the header entirely
