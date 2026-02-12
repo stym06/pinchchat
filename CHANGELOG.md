@@ -10,6 +10,8 @@ Format based on [Keep a Changelog](https://keepachangelog.com/), with [Conventio
 - **Channel/type icons in session list** — Discord, Telegram, cron, and webchat sessions now show recognizable icons in the sidebar (`73d9e5f`)
 - **Date separators** — visual dividers between messages from different days for easier conversation scanning (`375bd10`)
 - **Screenshot in README** — added a real screenshot of the app to the README (`788909f`)
+- **Loading indicator** — spinner when switching sessions (`cb882f5`)
+- **Login URL validation** — inline hint when gateway URL doesn't start with ws:// or wss://, connect button disabled until valid (`dc49734`)
 
 ### Fixed
 - **ESLint + CI** — resolved all ESLint errors including React compiler rules; added lint step to CI pipeline (`916910f`, `29482e3`)
