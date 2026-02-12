@@ -433,7 +433,8 @@
 ## Item #41
 - **Date:** 2026-02-12
 - **Priority:** medium
-- **Status:** pending
+- **Status:** done
+- **Completed:** 2026-02-12 — commit `bd446aa`
 - **Description:** Tool call payload viewer — word-wrap toggle instead of horizontal scroll
 - **Details:**
   - Currently tool call JSON payloads/results have long lines that require horizontal scrolling
