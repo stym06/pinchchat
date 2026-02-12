@@ -4,6 +4,11 @@ All notable changes to PinchChat are documented here.
 
 Format based on [Keep a Changelog](https://keepachangelog.com/), with [Conventional Commits](https://www.conventionalcommits.org/).
 
+## [1.13.0] — 2026-02-12
+### Added
+- Keyboard shortcuts Alt+↑ / Alt+↓ to navigate between sessions
+- Shortcut documented in the keyboard shortcuts help panel (?)
+
 ## [1.12.0] — 2026-02-12
 
 ### Added
