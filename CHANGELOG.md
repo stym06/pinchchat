@@ -4,6 +4,12 @@ All notable changes to PinchChat are documented here.
 
 Format based on [Keep a Changelog](https://keepachangelog.com/), with [Conventional Commits](https://www.conventionalcommits.org/).
 
+## [1.20.0] — 2026-02-12
+### Added
+- Theme switcher — Dark, Light, and OLED Black modes with 6 configurable accent colors (Cyan, Violet, Emerald, Amber, Rose, Blue)
+- CSS custom properties system for consistent theming across all components
+- Theme and accent preferences persisted in localStorage
+
 ## [1.18.0] — 2026-02-12
 ### Added
 - Improved thinking/reasoning indicator with elapsed time counter — shows pulsing "Reasoning..." with timer when agent is thinking with hidden content, instead of generic bouncing dots
