@@ -279,7 +279,8 @@
 ## Item #31
 - **Date:** 2026-02-12
 - **Priority:** medium
-- **Status:** pending
+- **Status:** done
+- **Completed:** 2026-02-12 — commit `03eb9e6`
 - **Description:** Contenu des inputs scopé par session
 - **Details:**
   - Quand on commence à taper un message dans une session puis qu'on switch vers une autre, le brouillon doit être conservé
