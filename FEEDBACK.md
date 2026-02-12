@@ -235,3 +235,21 @@
   - Check for any elements with fixed widths or horizontal overflow (code blocks, tool calls, long URLs)
   - Test with responsive dev tools at 375px width (iPhone SE) and 390px (iPhone 14)
   - May need `overflow-x: hidden` on the main container or `max-width: 100vw` adjustments
+
+## Item #27
+- **Date:** 2026-02-12
+- **Priority:** high
+- **Status:** done
+- **Completed:** 2026-02-12 — commit `aa158ad`
+- **Description:** Clean release workflow with Docker image tags
+- **Details:**
+  - Currently no proper version tags on Docker images — needs a clean release process
+  - Create a GitHub Actions release workflow that:
+    1. Triggers on git tag push (v*)
+    2. Builds Docker image
+    3. Pushes to ghcr.io with proper tags: `vX.Y.Z`, `vX.Y`, `vX`, `latest`
+    4. Creates a GitHub Release with changelog excerpt
+  - Stop bumping versions in the cron — versions should only be bumped via the release workflow
+  - The cron should NOT create tags or releases — it should commit to main with conventional commits, and Nicolas (or a manual trigger) decides when to cut a release
+  - Consider using `release-please` or a simple manual workflow_dispatch with version input
+  - Current Docker workflow (if any) should be reviewed and replaced by this proper one
