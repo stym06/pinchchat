@@ -28,6 +28,8 @@ const en = {
   'header.logout': 'Logout',
   'header.toggleSidebar': 'Toggle sidebar',
   'header.changeLanguage': 'Change language',
+  'header.soundOn': 'Enable notification sound',
+  'header.soundOff': 'Disable notification sound',
 
   // Chat
   'chat.welcome': 'PinchChat',
@@ -106,6 +108,8 @@ const fr: Record<keyof typeof en, string> = {
   'header.logout': 'Déconnexion',
   'header.toggleSidebar': 'Afficher/masquer la barre latérale',
   'header.changeLanguage': 'Changer de langue',
+  'header.soundOn': 'Activer le son de notification',
+  'header.soundOff': 'Désactiver le son de notification',
 
   'chat.welcome': 'PinchChat',
   'chat.welcomeSub': 'Envoyez un message pour commencer',

@@ -1,15 +1,22 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { playNotificationSound } from '../lib/notificationSound';
 
 const ORIGINAL_TITLE = document.title;
+const SOUND_KEY = 'pinchchat-notification-sound';
+const hasNotificationAPI = typeof Notification !== 'undefined';
 
 /**
- * Hook that manages browser notifications and tab title badge
- * when new messages arrive while the tab is not focused.
+ * Hook that manages browser notifications, tab title badge,
+ * and notification sounds when new messages arrive while the tab is not focused.
  */
 export function useNotifications() {
   const [unreadCount, setUnreadCount] = useState(0);
+  const [soundEnabled, setSoundEnabled] = useState(() => {
+    const stored = localStorage.getItem(SOUND_KEY);
+    return stored === null ? true : stored === 'true';
+  });
   const isVisibleRef = useRef(!document.hidden);
-  const permissionRef = useRef(Notification.permission);
+  const permissionRef = useRef(hasNotificationAPI ? Notification.permission : 'denied' as NotificationPermission);
 
   // Track tab visibility
   useEffect(() => {
@@ -34,7 +41,7 @@ export function useNotifications() {
 
   // Request permission on first user interaction
   useEffect(() => {
-    if (permissionRef.current !== 'default') return;
+    if (!hasNotificationAPI || permissionRef.current !== 'default') return;
     const requestOnInteraction = () => {
       if (permissionRef.current === 'default') {
         Notification.requestPermission().then(p => {
@@ -47,19 +54,35 @@ export function useNotifications() {
     return () => document.removeEventListener('click', requestOnInteraction);
   }, []);
 
+  // Persist sound preference
+  const toggleSound = useCallback(() => {
+    setSoundEnabled(prev => {
+      const next = !prev;
+      localStorage.setItem(SOUND_KEY, String(next));
+      // Play a preview when enabling so user knows what it sounds like
+      if (next) playNotificationSound(0.3);
+      return next;
+    });
+  }, []);
+
   const notify = useCallback((title: string, body?: string) => {
     if (isVisibleRef.current) return; // Tab is focused, no need
 
     setUnreadCount(c => c + 1);
 
+    // Play notification sound
+    if (soundEnabled) {
+      playNotificationSound(0.3);
+    }
+
     // Send browser notification if permitted
-    if (permissionRef.current === 'granted') {
+    if (hasNotificationAPI && permissionRef.current === 'granted') {
       try {
         const n = new Notification(title, {
           body: body?.slice(0, 200),
           icon: '/logo.png',
           tag: 'pinchchat-message', // Collapse multiple into one
-          silent: false,
+          silent: soundEnabled, // Don't double-play system sound if we have our own
         });
         // Auto-close after 5s
         setTimeout(() => n.close(), 5000);
@@ -72,7 +95,7 @@ export function useNotifications() {
         // Notifications not supported (e.g. some mobile browsers)
       }
     }
-  }, []);
+  }, [soundEnabled]);
 
-  return { notify, unreadCount };
+  return { notify, unreadCount, soundEnabled, toggleSound };
 }

@@ -1,4 +1,4 @@
-import { Menu, Sparkles, LogOut } from 'lucide-react';
+import { Menu, Sparkles, LogOut, Volume2, VolumeOff } from 'lucide-react';
 import type { ConnectionStatus, Session } from '../types';
 import { useT } from '../hooks/useLocale';
 import { LanguageSelector } from './LanguageSelector';
@@ -9,9 +9,11 @@ interface Props {
   onToggleSidebar: () => void;
   activeSessionData?: Session;
   onLogout?: () => void;
+  soundEnabled?: boolean;
+  onToggleSound?: () => void;
 }
 
-export function Header({ status, sessionKey, onToggleSidebar, activeSessionData, onLogout }: Props) {
+export function Header({ status, sessionKey, onToggleSidebar, activeSessionData, onLogout, soundEnabled, onToggleSound }: Props) {
   const t = useT();
   const sessionLabel = sessionKey.split(':').pop() || sessionKey;
 
@@ -32,6 +34,16 @@ export function Header({ status, sessionKey, onToggleSidebar, activeSessionData,
         </div>
       </div>
       <div className="flex items-center gap-2 text-sm">
+        {onToggleSound && (
+          <button
+            onClick={onToggleSound}
+            aria-label={soundEnabled ? t('header.soundOff') : t('header.soundOn')}
+            className="p-2 rounded-2xl hover:bg-white/5 text-zinc-500 hover:text-zinc-300 transition-colors"
+            title={soundEnabled ? t('header.soundOff') : t('header.soundOn')}
+          >
+            {soundEnabled ? <Volume2 size={16} /> : <VolumeOff size={16} />}
+          </button>
+        )}
         <LanguageSelector />
         {status === 'connected' ? (
           <div className="flex items-center gap-2 rounded-2xl border border-white/8 bg-zinc-800/30 px-3 py-1.5">
