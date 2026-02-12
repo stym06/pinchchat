@@ -84,7 +84,7 @@ export default function App() {
         onClose={() => setSidebarOpen(false)}
       />
       <div className="flex-1 flex flex-col min-w-0" aria-hidden={sidebarOpen ? true : undefined}>
-        <Header status={status} sessionKey={activeSession} onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} activeSessionData={sessions.find(s => s.key === activeSession)} onLogout={logout} soundEnabled={soundEnabled} onToggleSound={toggleSound} />
+        <Header status={status} sessionKey={activeSession} onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} activeSessionData={sessions.find(s => s.key === activeSession)} onLogout={logout} soundEnabled={soundEnabled} onToggleSound={toggleSound} messages={messages} />
         <ConnectionBanner status={status} />
         <Suspense fallback={<div className="flex-1 flex items-center justify-center text-zinc-500"><div className="animate-pulse text-sm">Loading…</div></div>}>
           <Chat messages={messages} isGenerating={isGenerating} isLoadingHistory={isLoadingHistory} status={status} sessionKey={activeSession} onSend={sendMessage} onAbort={abort} />

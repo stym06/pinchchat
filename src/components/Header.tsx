@@ -1,8 +1,10 @@
-import { Menu, Sparkles, LogOut, Volume2, VolumeOff, Cpu, Bot } from 'lucide-react';
-import type { ConnectionStatus, Session } from '../types';
+import { useCallback } from 'react';
+import { Menu, Sparkles, LogOut, Volume2, VolumeOff, Cpu, Bot, Download } from 'lucide-react';
+import type { ConnectionStatus, Session, ChatMessage } from '../types';
 import { useT } from '../hooks/useLocale';
 import { LanguageSelector } from './LanguageSelector';
 import { sessionDisplayName } from '../lib/sessionName';
+import { messagesToMarkdown, downloadFile } from '../lib/exportChat';
 
 interface Props {
   status: ConnectionStatus;
@@ -12,11 +14,20 @@ interface Props {
   onLogout?: () => void;
   soundEnabled?: boolean;
   onToggleSound?: () => void;
+  messages?: ChatMessage[];
 }
 
-export function Header({ status, sessionKey, onToggleSidebar, activeSessionData, onLogout, soundEnabled, onToggleSound }: Props) {
+export function Header({ status, sessionKey, onToggleSidebar, activeSessionData, onLogout, soundEnabled, onToggleSound, messages }: Props) {
   const t = useT();
   const sessionLabel = activeSessionData ? sessionDisplayName(activeSessionData) : (sessionKey.split(':').pop() || sessionKey);
+
+  const handleExport = useCallback(() => {
+    if (!messages || messages.length === 0) return;
+    const md = messagesToMarkdown(messages, sessionLabel);
+    const safeLabel = sessionLabel.replace(/[^a-zA-Z0-9_-]/g, '_').slice(0, 50);
+    const date = new Date().toISOString().slice(0, 10);
+    downloadFile(md, `${safeLabel}_${date}.md`);
+  }, [messages, sessionLabel]);
 
   return (
     <>
@@ -52,6 +63,16 @@ export function Header({ status, sessionKey, onToggleSidebar, activeSessionData,
             title={soundEnabled ? t('header.soundOff') : t('header.soundOn')}
           >
             {soundEnabled ? <Volume2 size={16} /> : <VolumeOff size={16} />}
+          </button>
+        )}
+        {messages && messages.length > 0 && (
+          <button
+            onClick={handleExport}
+            aria-label={t('header.export')}
+            className="p-2 rounded-2xl hover:bg-white/5 text-zinc-500 hover:text-zinc-300 transition-colors"
+            title={t('header.export')}
+          >
+            <Download size={16} />
           </button>
         )}
         <LanguageSelector />

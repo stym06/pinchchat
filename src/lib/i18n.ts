@@ -94,6 +94,9 @@ const en = {
   'error.reload': 'Reload page',
   'shortcuts.navigationSection': 'Navigation',
   'shortcuts.generalSection': 'General',
+
+  // Export
+  'header.export': 'Export conversation as Markdown',
 } as const;
 
 const fr: Record<keyof typeof en, string> = {
@@ -172,6 +175,8 @@ const fr: Record<keyof typeof en, string> = {
   'error.reload': 'Recharger',
   'shortcuts.navigationSection': 'Navigation',
   'shortcuts.generalSection': 'Général',
+
+  'header.export': 'Exporter la conversation en Markdown',
 };
 
 export type TranslationKey = keyof typeof en;
