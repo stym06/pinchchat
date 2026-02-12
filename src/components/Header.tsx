@@ -1,4 +1,4 @@
-import { Menu, Sparkles, LogOut, Volume2, VolumeOff } from 'lucide-react';
+import { Menu, Sparkles, LogOut, Volume2, VolumeOff, Cpu } from 'lucide-react';
 import type { ConnectionStatus, Session } from '../types';
 import { useT } from '../hooks/useLocale';
 import { LanguageSelector } from './LanguageSelector';
@@ -30,7 +30,15 @@ export function Header({ status, sessionKey, onToggleSidebar, activeSessionData,
             <span className="font-semibold text-zinc-300 text-sm tracking-wide">{t('header.title')}</span>
             <Sparkles className="h-3.5 w-3.5 text-cyan-300/60" />
           </div>
-          <span className="text-xs text-zinc-500 truncate block">{sessionLabel}</span>
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="text-xs text-zinc-500 truncate">{sessionLabel}</span>
+            {activeSessionData?.model && (
+              <span className="inline-flex items-center gap-1 text-[10px] text-zinc-500 bg-white/5 rounded-full px-2 py-0.5 shrink-0" title={`Model: ${activeSessionData.model}${activeSessionData.agentId ? ` · Agent: ${activeSessionData.agentId}` : ''}`}>
+                <Cpu className="h-2.5 w-2.5" />
+                <span className="truncate max-w-[120px]">{activeSessionData.model.replace(/^.*\//, '')}</span>
+              </span>
+            )}
+          </div>
         </div>
       </div>
       <div className="flex items-center gap-2 text-sm">

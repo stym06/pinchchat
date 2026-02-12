@@ -94,6 +94,8 @@ export function useGateway() {
           outputTokens: s.outputTokens as number | undefined,
           channel: (s.lastChannel || s.channel) as string | undefined,
           kind: s.kind as string | undefined,
+          model: s.model as string | undefined,
+          agentId: s.agentId as string | undefined,
         })));
       }
     } catch {

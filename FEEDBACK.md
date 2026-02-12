@@ -195,3 +195,16 @@
   - Webchat → icône chat/bulle
   - Fallback générique pour les channels non-vanilla (ex: TeamSpeak) → icône par défaut (bulle ou globe)
   - Utiliser des SVG ou une lib d'icônes (lucide-react, react-icons, etc.)
+
+## Item #24
+- **Date:** 2026-02-12
+- **Priority:** medium
+- **Status:** pending
+- **Description:** Display agent and model info in the UI
+- **Details:**
+  - Show the OpenClaw agent ID (e.g. "main") and the model being used (e.g. "claude-opus-4-6") somewhere in the UI
+  - Investigate what data `sessions.list` and the connect response return — look for `agentId`, `model`, `defaultModel` or similar fields
+  - Good placement options: in the header bar near the session name, or in a small info tooltip/popover
+  - If the gateway doesn't expose this info via WebSocket, check if there's another endpoint or if it can be inferred from the session key
+  - Keep it subtle/non-intrusive — small text or an info icon that reveals details on hover
+  - This helps users know which agent/model is handling their conversation

@@ -27,6 +27,8 @@ export interface Session {
   outputTokens?: number;
   channel?: string;
   kind?: string;
+  model?: string;
+  agentId?: string;
 }
 
 export type ConnectionStatus = 'disconnected' | 'connecting' | 'connected';
