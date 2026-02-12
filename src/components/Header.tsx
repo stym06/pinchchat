@@ -15,9 +15,10 @@ interface Props {
   soundEnabled?: boolean;
   onToggleSound?: () => void;
   messages?: ChatMessage[];
+  agentAvatarUrl?: string;
 }
 
-export function Header({ status, sessionKey, onToggleSidebar, activeSessionData, onLogout, soundEnabled, onToggleSound, messages }: Props) {
+export function Header({ status, sessionKey, onToggleSidebar, activeSessionData, onLogout, soundEnabled, onToggleSound, messages, agentAvatarUrl }: Props) {
   const t = useT();
   const sessionLabel = activeSessionData ? sessionDisplayName(activeSessionData) : (sessionKey.split(':').pop() || sessionKey);
 
@@ -36,7 +37,7 @@ export function Header({ status, sessionKey, onToggleSidebar, activeSessionData,
         <Menu size={20} />
       </button>
       <div className="flex items-center gap-3 flex-1 min-w-0">
-        <img src="/logo.png" alt="PinchChat" className="h-9 w-9 rounded-2xl" />
+        <img src={agentAvatarUrl || '/logo.png'} alt="PinchChat" className="h-9 w-9 rounded-2xl object-cover" />
         <div className="min-w-0">
           <div className="flex items-center gap-2">
             <span className="font-semibold text-zinc-300 text-sm tracking-wide">{t('header.title')}</span>

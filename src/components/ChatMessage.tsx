@@ -320,7 +320,7 @@ function SystemEventMessage({ message }: { message: ChatMessageType }) {
   );
 }
 
-export function ChatMessageComponent({ message, onRetry }: { message: ChatMessageType; onRetry?: (text: string) => void }) {
+export function ChatMessageComponent({ message, onRetry, agentAvatarUrl }: { message: ChatMessageType; onRetry?: (text: string) => void; agentAvatarUrl?: string }) {
   useLocale(); // re-render on locale change
   const isUser = message.role === 'user';
 
@@ -342,10 +342,12 @@ export function ChatMessageComponent({ message, onRetry }: { message: ChatMessag
   return (
     <div className={`animate-fade-in flex gap-3 px-4 py-2 ${isUser ? 'flex-row-reverse' : ''}`}>
       {/* Avatar */}
-      <div className="shrink-0 mt-1 flex h-9 w-9 items-center justify-center rounded-2xl border border-white/8 bg-zinc-800/40">
+      <div className="shrink-0 mt-1 flex h-9 w-9 items-center justify-center rounded-2xl border border-white/8 bg-zinc-800/40 overflow-hidden">
         {isUser
           ? <User className="h-4 w-4 text-cyan-200" />
-          : <Bot className="h-4 w-4 text-cyan-200" />
+          : agentAvatarUrl
+            ? <img src={agentAvatarUrl} alt="Agent" className="h-full w-full object-cover" />
+            : <Bot className="h-4 w-4 text-cyan-200" />
         }
       </div>
 

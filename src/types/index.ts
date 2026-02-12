@@ -35,6 +35,13 @@ export interface Session {
   lastMessagePreview?: string;
 }
 
+export interface AgentIdentity {
+  name?: string;
+  emoji?: string;
+  avatar?: string;
+  agentId?: string;
+}
+
 export type ConnectionStatus = 'disconnected' | 'connecting' | 'connected';
 
 export interface GatewayState {

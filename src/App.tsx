@@ -14,7 +14,7 @@ export default function App() {
   const {
     status, messages, sessions, activeSession, isGenerating, isLoadingHistory,
     sendMessage, abort, switchSession, deleteSession,
-    authenticated, login, logout, connectError, isConnecting,
+    authenticated, login, logout, connectError, isConnecting, agentIdentity,
   } = useGateway();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
@@ -97,10 +97,10 @@ export default function App() {
         onClose={() => setSidebarOpen(false)}
       />
       <div className="flex-1 flex flex-col min-w-0" aria-hidden={sidebarOpen ? true : undefined}>
-        <Header status={status} sessionKey={activeSession} onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} activeSessionData={sessions.find(s => s.key === activeSession)} onLogout={logout} soundEnabled={soundEnabled} onToggleSound={toggleSound} messages={messages} />
+        <Header status={status} sessionKey={activeSession} onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} activeSessionData={sessions.find(s => s.key === activeSession)} onLogout={logout} soundEnabled={soundEnabled} onToggleSound={toggleSound} messages={messages} agentAvatarUrl={agentIdentity?.avatar} />
         <ConnectionBanner status={status} />
         <Suspense fallback={<div className="flex-1 flex items-center justify-center text-zinc-500"><div className="animate-pulse text-sm">Loading…</div></div>}>
-          <Chat messages={messages} isGenerating={isGenerating} isLoadingHistory={isLoadingHistory} status={status} sessionKey={activeSession} onSend={sendMessage} onAbort={abort} />
+          <Chat messages={messages} isGenerating={isGenerating} isLoadingHistory={isLoadingHistory} status={status} sessionKey={activeSession} onSend={sendMessage} onAbort={abort} agentAvatarUrl={agentIdentity?.avatar} />
         </Suspense>
       </div>
       <KeyboardShortcuts open={shortcutsOpen} onClose={() => setShortcutsOpen(false)} />

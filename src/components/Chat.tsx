@@ -16,6 +16,7 @@ interface Props {
   sessionKey?: string;
   onSend: (text: string, attachments?: Array<{ mimeType: string; fileName: string; content: string }>) => void;
   onAbort: () => void;
+  agentAvatarUrl?: string;
 }
 
 function isNoReply(msg: ChatMessage): boolean {
@@ -66,7 +67,7 @@ function getDateKey(ts: number): string {
 /** Threshold in pixels — if the user is within this distance of the bottom, auto-scroll */
 const SCROLL_THRESHOLD = 150;
 
-export function Chat({ messages, isGenerating, isLoadingHistory, status, sessionKey, onSend, onAbort }: Props) {
+export function Chat({ messages, isGenerating, isLoadingHistory, status, sessionKey, onSend, onAbort, agentAvatarUrl }: Props) {
   const t = useT();
   const bottomRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -161,7 +162,7 @@ export function Chat({ messages, isGenerating, isLoadingHistory, status, session
                       <div className="flex-1 h-px bg-white/8" />
                     </div>
                   )}
-                  <ChatMessageComponent message={msg} onRetry={!isGenerating ? handleSend : undefined} />
+                  <ChatMessageComponent message={msg} onRetry={!isGenerating ? handleSend : undefined} agentAvatarUrl={agentAvatarUrl} />
                 </div>
           ))}
           {showTyping && <TypingIndicator />}

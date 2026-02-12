@@ -3,7 +3,7 @@ import { GatewayClient, type JsonPayload } from '../lib/gateway';
 import { genIdempotencyKey } from '../lib/utils';
 import { getStoredCredentials, storeCredentials, clearCredentials } from '../lib/credentials';
 import { isSystemEvent } from '../lib/systemEvent';
-import type { ChatMessage, MessageBlock, ConnectionStatus, Session } from '../types';
+import type { ChatMessage, MessageBlock, ConnectionStatus, Session, AgentIdentity } from '../types';
 
 interface ChatPayloadMessage {
   content?: string | Array<{ type: string; text?: string }>;
@@ -43,6 +43,7 @@ export function useGateway() {
   const currentRunIdRef = useRef<string | null>(null);
   const [activeSessions, setActiveSessions] = useState<Set<string>>(new Set());
   const [unreadSessions, setUnreadSessions] = useState<Set<string>>(new Set());
+  const [agentIdentity, setAgentIdentity] = useState<AgentIdentity | null>(null);
 
   const handleAgentEvent = useCallback((payload: JsonPayload) => {
     if (payload?.stream !== 'tool') return;
@@ -93,6 +94,22 @@ export function useGateway() {
     deleted.add(key);
     localStorage.setItem('pinchchat-deleted-sessions', JSON.stringify([...deleted]));
   }, [getDeletedSessions]);
+
+  const loadAgentIdentity = useCallback(async () => {
+    try {
+      const res = await clientRef.current?.send('agent.identity.get', {});
+      if (res) {
+        setAgentIdentity({
+          name: res.name as string | undefined,
+          emoji: res.emoji as string | undefined,
+          avatar: res.avatar as string | undefined,
+          agentId: res.agentId as string | undefined,
+        });
+      }
+    } catch {
+      // Silently ignore — identity is optional
+    }
+  }, []);
 
   const loadSessions = useCallback(async () => {
     try {
@@ -228,6 +245,7 @@ export function useGateway() {
         isConnectingRef.current = false;
         storeCredentials(wsUrl, token);
         loadSessions();
+        loadAgentIdentity();
         loadHistory(activeSessionRef.current);
       } else if (s === 'disconnected' && !client.isConnected) {
         // If we never connected successfully, this is an auth/connection error
@@ -345,7 +363,7 @@ export function useGateway() {
     isConnectingRef.current = true;
     setConnectError(null);
     client.connect();
-  }, [handleAgentEvent, loadHistory, loadSessions]);
+  }, [handleAgentEvent, loadHistory, loadSessions, loadAgentIdentity]);
 
   // On mount: try stored credentials
   const initRef = useRef(false);
@@ -461,6 +479,6 @@ export function useGateway() {
   return {
     status, messages, sessions: enrichedSessions, activeSession, isGenerating, isLoadingHistory,
     sendMessage, abort, switchSession, loadSessions, deleteSession,
-    authenticated, login, logout, connectError, isConnecting,
+    authenticated, login, logout, connectError, isConnecting, agentIdentity,
   };
 }

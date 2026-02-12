@@ -501,3 +501,56 @@
   - Clicking the info button on messages does nothing — no panel appears
   - Introduced in v1.15.0 (commit `b4813f0`)
   - Fix the click handler / panel display logic
+
+## Item #47
+- **Date:** 2026-02-12
+- **Priority:** medium
+- **Status:** pending
+- **Description:** Themes — light mode, OLED black, custom theme support
+  - Add theme switcher (dark default, light mode, OLED black)
+  - Configurable accent color
+  - Persist choice in localStorage
+
+## Item #48
+- **Date:** 2026-02-12
+- **Priority:** medium
+- **Status:** pending
+- **Description:** Message search — Ctrl+F in conversation history
+  - Search bar that filters/highlights messages in the current session
+  - Navigate between results (up/down arrows)
+  - Keyboard shortcut Ctrl+F
+
+## Item #49
+- **Date:** 2026-02-12
+- **Priority:** medium
+- **Status:** pending
+- **Description:** Syntax highlight in the input textarea
+  - Color code blocks even while typing in the prompt input
+  - Highlight markdown syntax (bold, code, headers) in real-time
+
+## Item #50
+- **Date:** 2026-02-12
+- **Priority:** medium
+- **Status:** pending
+- **Description:** Multi-tab — split view for 2 sessions side by side
+  - Allow viewing 2 sessions simultaneously in a split pane layout
+  - Drag-to-resize divider between panes
+  - Toggle via button or keyboard shortcut
+
+## Item #51
+- **Date:** 2026-02-12
+- **Priority:** medium
+- **Status:** pending
+- **Description:** Typing preview — live markdown render while typing
+  - Show a preview pane below or beside the input with rendered markdown
+  - Toggle on/off
+  - Helps compose complex messages with formatting
+
+## Item #52
+- **Date:** 2026-02-12
+- **Priority:** medium
+- **Status:** pending
+- **Description:** Raw JSON viewer — toggle to see raw gateway messages
+  - Toggle button to switch between rendered view and raw JSON
+  - Show the full gateway message payload as formatted JSON
+  - Useful for debugging and understanding the protocol
