@@ -4,6 +4,10 @@ All notable changes to PinchChat are documented here.
 
 Format based on [Keep a Changelog](https://keepachangelog.com/), with [Conventional Commits](https://www.conventionalcommits.org/).
 
+## [1.14.0] — 2026-02-12
+### Added
+- Collapse/expand all tool calls toggle — floating button appears when conversation has tool calls, lets you collapse or expand all at once
+
 ## [1.13.0] — 2026-02-12
 ### Added
 - Keyboard shortcuts Alt+↑ / Alt+↓ to navigate between sessions
