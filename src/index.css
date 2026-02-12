@@ -25,9 +25,14 @@
   background: #71717a;
 }
 
-/* Textarea-specific: even thinner scrollbar */
+/* Textarea-specific: even thinner scrollbar, no horizontal scroll */
 textarea::-webkit-scrollbar {
   width: 4px;
+  height: 0;
+}
+
+textarea::-webkit-scrollbar:horizontal {
+  display: none;
 }
 
 textarea::-webkit-scrollbar-thumb {
@@ -37,6 +42,12 @@ textarea::-webkit-scrollbar-thumb {
 
 textarea::-webkit-scrollbar-thumb:hover {
   background: #52525b;
+}
+
+textarea {
+  overflow-x: hidden;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 html, body {

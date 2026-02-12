@@ -366,7 +366,8 @@
 ## Item #36
 - **Date:** 2026-02-12
 - **Priority:** medium
-- **Status:** in-progress
+- **Status:** done
+- **Completed:** 2026-02-12 — commit `cecfa3e`
 - **Description:** Prettier scrollbar in the text input field (ChatInput textarea)
 - **Details:**
   - On macOS the default scrollbar in the textarea looks ugly
@@ -374,3 +375,16 @@
   - Use webkit-scrollbar styles + scrollbar-width/scrollbar-color for Firefox
   - Keep it subtle: thin track, small thumb with rounded corners, matching the zinc/cyan theme
   - Reported by Josh (external user on macOS)
+
+## Item #37
+- **Date:** 2026-02-12
+- **Priority:** high
+- **Status:** pending
+- **Description:** Scrollbar in textarea still ugly on Windows (horizontal scrollbar)
+- **Details:**
+  - Josh reports the textarea horizontal scrollbar is still ugly/beige on Windows even after v1.11.0
+  - The webkit scrollbar fix from #36 may not apply to the textarea horizontal scrollbar
+  - Screenshot shows a small beige/gold horizontal scrollbar at the bottom of the input area
+  - May need to also hide the horizontal scrollbar entirely (textarea shouldn't need horizontal scroll — use word-wrap/overflow-wrap instead)
+  - Add `overflow-x: hidden` on the textarea to prevent horizontal scrollbar entirely
+  - Also check that `resize: none` is set and `word-break: break-word` / `overflow-wrap: break-word` to avoid horizontal overflow
