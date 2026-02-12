@@ -199,7 +199,8 @@
 ## Item #24
 - **Date:** 2026-02-12
 - **Priority:** medium
-- **Status:** pending
+- **Status:** done
+- **Completed:** 2026-02-12 — commit `96f2883`
 - **Description:** Display agent and model info in the UI
 - **Details:**
   - Show the OpenClaw agent ID (e.g. "main") and the model being used (e.g. "claude-opus-4-6") somewhere in the UI
