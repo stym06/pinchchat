@@ -6,6 +6,18 @@ Format based on [Keep a Changelog](https://keepachangelog.com/), with [Conventio
 
 ## [Unreleased]
 
+## [1.3.0] — 2026-02-12
+
+New features improving daily usability.
+
+### Added
+- **Unread message indicators** — sessions with new messages show a visual badge in the sidebar so you never miss activity (`c0d27a7`)
+- **Copy buttons on tool calls** — expanded tool call parameters and results now have one-click copy buttons (`908dbb4`)
+- **Troubleshooting guide** — README now includes a troubleshooting section for common connection and build issues (`7a55940`)
+
+### Fixed
+- **CI lint errors** — resolved lint issues in Sidebar, TypingIndicator, and useGateway (`6734b54`)
+
 ## [1.2.2] — 2026-02-12
 
 Code readability and developer experience polish.
