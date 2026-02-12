@@ -19,6 +19,7 @@ const en = {
   'login.showToken': 'Show token',
   'login.hideToken': 'Hide token',
   'login.storedLocally': 'Credentials are stored locally in your browser',
+  'login.wsHint': 'URL must start with ws:// or wss://',
 
   // Header
   'header.title': 'PinchChat',
@@ -97,6 +98,7 @@ const fr: Record<keyof typeof en, string> = {
   'login.showToken': 'Afficher le token',
   'login.hideToken': 'Masquer le token',
   'login.storedLocally': 'Les identifiants sont stockés localement dans votre navigateur',
+  'login.wsHint': 'L\'URL doit commencer par ws:// ou wss://',
 
   'header.title': 'PinchChat',
   'header.connected': 'Connecté',

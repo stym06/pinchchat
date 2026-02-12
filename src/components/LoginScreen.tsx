@@ -26,10 +26,14 @@ export function LoginScreen({ onConnect, error, isConnecting }: Props) {
   const [token, setToken] = useState(getInitialToken);
   const [showToken, setShowToken] = useState(false);
 
+  const urlTrimmed = url.trim();
+  const isValidWsUrl = /^wss?:\/\/.+/.test(urlTrimmed);
+  const showUrlHint = urlTrimmed.length > 0 && !isValidWsUrl;
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!url.trim() || !token.trim()) return;
-    onConnect(url.trim(), token.trim());
+    if (!urlTrimmed || !token.trim() || !isValidWsUrl) return;
+    onConnect(urlTrimmed, token.trim());
   };
 
   return (
@@ -61,6 +65,11 @@ export function LoginScreen({ onConnect, error, isConnecting }: Props) {
               autoComplete="url"
               disabled={isConnecting}
             />
+            {showUrlHint && (
+              <p className="text-xs text-amber-400/80 mt-1.5 pl-1">
+                {t('login.wsHint')}
+              </p>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -98,7 +107,7 @@ export function LoginScreen({ onConnect, error, isConnecting }: Props) {
 
           <button
             type="submit"
-            disabled={!url.trim() || !token.trim() || isConnecting}
+            disabled={!isValidWsUrl || !token.trim() || isConnecting}
             className="w-full rounded-xl bg-gradient-to-r from-cyan-500 to-violet-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/30 hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
           >
             {isConnecting ? (
