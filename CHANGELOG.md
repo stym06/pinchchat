@@ -6,6 +6,11 @@ Format based on [Keep a Changelog](https://keepachangelog.com/), with [Conventio
 
 ## [Unreleased]
 
+## [1.5.0] — 2026-02-12
+
+### Added
+- **Resizable sidebar** — drag the right edge to resize the sidebar; width persists across sessions (`fa9b10a`)
+
 ## [1.4.0] — 2026-02-12
 
 New features and mobile fixes.

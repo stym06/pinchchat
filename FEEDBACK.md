@@ -257,7 +257,8 @@
 ## Item #29
 - **Date:** 2026-02-12
 - **Priority:** medium
-- **Status:** in-progress
+- **Status:** done
+- **Completed:** 2026-02-12 — commit `fa9b10a`
 - **Description:** Sidebar resizable par drag & drop
 - **Details:**
   - Les noms de sessions sont coupés dans la sidebar
@@ -305,6 +306,18 @@
   - Montrer clairement à quel agent on parle (pas juste l'agentId technique)
   - Utile pour le multi-agent : savoir si on parle à "Marlbot" ou à un autre agent
   - Placement : header ou en haut du chat
+
+## Item #34
+- **Date:** 2026-02-12
+- **Priority:** high
+- **Status:** pending
+- **Description:** Distinguer les événements système des messages utilisateur
+- **Details:**
+  - Les événements système (TeamSpeak join/leave, webhooks, heartbeats, etc.) arrivent comme des messages `role: user` et s'affichent comme si c'était l'utilisateur qui parlait
+  - Il faut les détecter et les afficher différemment — petite notification grisée/discrète, pas une bulle utilisateur
+  - Indices pour les détecter : présence de `[EVENT]`, `[from: ... (system)]`, `[HEARTBEAT]`, messages qui matchent le heartbeat prompt, etc.
+  - Peut aussi checker si le gateway expose un champ type `source` ou `system` dans les métadonnées du message
+  - Ces messages ne devraient pas avoir le même poids visuel que les vrais messages de l'utilisateur
 
 ## Item #28
 - **Date:** 2026-02-12
