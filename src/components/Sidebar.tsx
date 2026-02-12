@@ -5,6 +5,21 @@ import { useT } from '../hooks/useLocale';
 import { SessionIcon } from './SessionIcon';
 
 const PINNED_KEY = 'pinchchat-pinned-sessions';
+const WIDTH_KEY = 'pinchchat-sidebar-width';
+const MIN_WIDTH = 220;
+const MAX_WIDTH = 480;
+const DEFAULT_WIDTH = 288; // w-72
+
+function getSavedWidth(): number {
+  try {
+    const v = localStorage.getItem(WIDTH_KEY);
+    if (v) {
+      const n = Number(v);
+      if (n >= MIN_WIDTH && n <= MAX_WIDTH) return n;
+    }
+  } catch { /* noop */ }
+  return DEFAULT_WIDTH;
+}
 
 function getPinnedSessions(): Set<string> {
   try {
@@ -33,8 +48,48 @@ export function Sidebar({ sessions, activeSession, onSwitch, open, onClose }: Pr
   const [filter, setFilter] = useState('');
   const [focusIdx, setFocusIdx] = useState(-1);
   const [pinned, setPinned] = useState(getPinnedSessions);
+  const [width, setWidth] = useState(getSavedWidth);
+  const [dragging, setDragging] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
+  const dragRef = useRef({ startX: 0, startW: 0 });
+
+  // Drag-to-resize logic
+  useEffect(() => {
+    if (!dragging) return;
+    const onMove = (e: MouseEvent | TouchEvent) => {
+      const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+      const newW = Math.min(MAX_WIDTH, Math.max(MIN_WIDTH, dragRef.current.startW + (clientX - dragRef.current.startX)));
+      setWidth(newW);
+    };
+    const onUp = () => {
+      setDragging(false);
+      // persist on release
+      localStorage.setItem(WIDTH_KEY, String(width));
+    };
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+    document.addEventListener('touchmove', onMove);
+    document.addEventListener('touchend', onUp);
+    return () => {
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+      document.removeEventListener('touchmove', onMove);
+      document.removeEventListener('touchend', onUp);
+    };
+  }, [dragging, width]);
+
+  // Save width when it changes (debounced via drag end above, but also on unmount)
+  useEffect(() => {
+    return () => { try { localStorage.setItem(WIDTH_KEY, String(width)); } catch { /* noop */ } };
+  }, [width]);
+
+  const startDrag = useCallback((e: React.MouseEvent | React.TouchEvent) => {
+    e.preventDefault();
+    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    dragRef.current = { startX: clientX, startW: width };
+    setDragging(true);
+  }, [width]);
 
   const togglePin = useCallback((key: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -79,7 +134,7 @@ export function Sidebar({ sessions, activeSession, onSwitch, open, onClose }: Pr
   return (
     <>
       {open && <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden" onClick={onClose} />}
-      <aside role="navigation" aria-label="Sessions" className={`fixed lg:relative top-0 left-0 h-full w-72 bg-[#1e1e24]/95 border-r border-white/8 z-50 transform transition-transform lg:translate-x-0 ${open ? 'translate-x-0' : '-translate-x-full'} flex flex-col backdrop-blur-xl`}>
+      <aside role="navigation" aria-label="Sessions" className={`fixed lg:relative top-0 left-0 h-full bg-[#1e1e24]/95 border-r border-white/8 z-50 transform ${dragging ? '' : 'transition-transform'} lg:translate-x-0 ${open ? 'translate-x-0' : '-translate-x-full'} flex flex-col backdrop-blur-xl`} style={{ width: `${width}px` }}>
         <div className="h-14 flex items-center justify-between px-4 border-b border-white/8">
           <div className="flex items-center gap-2">
             <div className="relative">
@@ -238,7 +293,23 @@ export function Sidebar({ sessions, activeSession, onSwitch, open, onClose }: Pr
           <span className="h-1.5 w-1.5 rounded-full bg-indigo-300/50 shadow-[0_0_10px_rgba(99,102,241,0.4)]" />
           <span className="ml-1 text-[9px] text-zinc-600 select-all" title={`PinchChat v${__APP_VERSION__}`}>v{__APP_VERSION__}</span>
         </div>
+        {/* Resize drag handle */}
+        <div
+          onMouseDown={startDrag}
+          onTouchStart={startDrag}
+          className={`hidden lg:block absolute top-0 right-0 w-1.5 h-full cursor-col-resize group/resize z-10 ${dragging ? 'bg-cyan-400/20' : 'hover:bg-cyan-400/15'} transition-colors`}
+          role="separator"
+          aria-orientation="vertical"
+          aria-label="Resize sidebar"
+          aria-valuenow={width}
+          aria-valuemin={MIN_WIDTH}
+          aria-valuemax={MAX_WIDTH}
+        >
+          <div className={`absolute top-1/2 -translate-y-1/2 right-0 w-0.5 h-8 rounded-full ${dragging ? 'bg-cyan-400/50' : 'bg-white/0 group-hover/resize:bg-cyan-400/30'} transition-colors`} />
+        </div>
       </aside>
+      {/* Prevent text selection while dragging */}
+      {dragging && <div className="fixed inset-0 z-[60] cursor-col-resize" />}
     </>
   );
 }

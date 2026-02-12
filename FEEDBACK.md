@@ -253,3 +253,79 @@
   - The cron should NOT create tags or releases — it should commit to main with conventional commits, and Nicolas (or a manual trigger) decides when to cut a release
   - Consider using `release-please` or a simple manual workflow_dispatch with version input
   - Current Docker workflow (if any) should be reviewed and replaced by this proper one
+
+## Item #29
+- **Date:** 2026-02-12
+- **Priority:** medium
+- **Status:** in-progress
+- **Description:** Sidebar resizable par drag & drop
+- **Details:**
+  - Les noms de sessions sont coupés dans la sidebar
+  - Permettre à l'utilisateur de redimensionner la sidebar en glissant le bord droit
+  - Persister la largeur choisie (localStorage)
+
+## Item #30
+- **Date:** 2026-02-12
+- **Priority:** medium
+- **Status:** pending
+- **Description:** Supprimer une session depuis la sidebar
+- **Details:**
+  - Ajouter un bouton/action pour supprimer une session (clic droit ou icône)
+  - Confirmation avant suppression
+  - Vérifier si le gateway expose un endpoint de suppression de session
+
+## Item #31
+- **Date:** 2026-02-12
+- **Priority:** medium
+- **Status:** pending
+- **Description:** Contenu des inputs scopé par session
+- **Details:**
+  - Quand on commence à taper un message dans une session puis qu'on switch vers une autre, le brouillon doit être conservé
+  - Stocker les drafts par sessionKey (en mémoire ou localStorage)
+  - Restaurer le brouillon quand on revient sur la session
+
+## Item #32
+- **Date:** 2026-02-12
+- **Priority:** medium
+- **Status:** pending
+- **Description:** Meilleur titre de session en haut de page
+- **Details:**
+  - Actuellement on voit un UUID moche comme titre
+  - Afficher un nom plus lisible : le displayName de la session, ou le channel + contexte
+  - Pour les sessions main : afficher "Main" ou le nom de l'agent
+  - Pour les sub-agents : afficher le label s'il existe
+  - Fallback : session key nettoyée (sans le préfixe agent:xxx:)
+
+## Item #33
+- **Date:** 2026-02-12
+- **Priority:** medium
+- **Status:** pending
+- **Description:** Afficher le nom de l'agent dans l'UI
+- **Details:**
+  - Montrer clairement à quel agent on parle (pas juste l'agentId technique)
+  - Utile pour le multi-agent : savoir si on parle à "Marlbot" ou à un autre agent
+  - Placement : header ou en haut du chat
+
+## Item #28
+- **Date:** 2026-02-12
+- **Priority:** high
+- **Status:** done
+- **Completed:** 2026-02-12 — tagged `v1.4.0`
+- **Description:** Cron should auto-tag releases with semver based on commit type
+- **Details:**
+  - The cron knows what changes it made (feat, fix, docs, refactor, etc.)
+  - It should auto-determine the version bump based on conventional commits:
+    - `feat:` → minor bump
+    - `fix:` / `refactor:` / `style:` / `perf:` → patch bump
+    - `docs:` / `ci:` / `chore:` → no release (skip tagging)
+    - Breaking changes → major bump
+  - After each meaningful commit (feat or fix), the cron should:
+    1. Read current version from package.json
+    2. Determine bump type from commit prefix
+    3. Bump version in package.json
+    4. Update CHANGELOG.md (move unreleased to new version section)
+    5. Commit the version bump
+    6. Create and push the git tag (vX.Y.Z)
+    7. The release.yml workflow handles the rest (Docker, GitHub Release)
+  - Accumulate doc/ci changes — only tag when there's a feat or fix to release
+  - This replaces the previous "Nicolas tags manually" approach
