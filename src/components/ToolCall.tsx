@@ -2,6 +2,7 @@ import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { ChevronRight, ChevronDown, Check, Copy, WrapText, AlignLeft } from 'lucide-react';
 import hljs from '../lib/highlight';
 import { useT } from '../hooks/useLocale';
+import { useTheme } from '../hooks/useTheme';
 import { ImageBlock } from './ImageBlock';
 import { useToolCollapse } from '../hooks/useToolCollapse';
 
@@ -31,13 +32,19 @@ const defaultRGB: ToolRGB = { r: 161, g: 161, b: 170 }; // zinc
 
 function rgbStr(c: ToolRGB): string { return `${c.r},${c.g},${c.b}`; }
 
-function getColorStyles(name: string): { badge: React.CSSProperties; text: React.CSSProperties; expand: React.CSSProperties; glow: string } {
+function getColorStyles(name: string, isLight = false): { badge: React.CSSProperties; text: React.CSSProperties; expand: React.CSSProperties; glow: string } {
   const c = toolRGBs[name] || defaultRGB;
   const rgb = rgbStr(c);
+  // Use darker text and higher bg opacity in light theme for readability
+  const badgeBgAlpha = isLight ? 0.15 : 0.10;
+  const expandBgAlpha = isLight ? 0.08 : 0.05;
+  const textColor = isLight
+    ? `rgb(${Math.round(c.r * 0.6)},${Math.round(c.g * 0.6)},${Math.round(c.b * 0.6)})`
+    : `rgb(${c.r},${c.g},${c.b})`;
   return {
-    badge: { borderColor: `rgba(${rgb},0.3)`, backgroundColor: `rgba(${rgb},0.10)` },
-    text: { color: `rgb(${c.r},${c.g},${c.b})` },
-    expand: { borderColor: `rgba(${rgb},0.2)`, backgroundColor: `rgba(${rgb},0.05)` },
+    badge: { borderColor: `rgba(${rgb},0.3)`, backgroundColor: `rgba(${rgb},${badgeBgAlpha})` },
+    text: { color: textColor },
+    expand: { borderColor: `rgba(${rgb},0.2)`, backgroundColor: `rgba(${rgb},${expandBgAlpha})` },
     glow: `shadow-[0_0_8px_rgba(${rgb},0.15)]`,
   };
 }
@@ -253,8 +260,9 @@ export function ToolCall({ name, input, result }: { name: string; input?: Record
   const [open, setOpen] = useState(false);
   const [wrap, setWrap] = useState(true);
   const { globalState, version } = useToolCollapse();
+  const { resolvedTheme } = useTheme();
   const lastVersion = useRef(version);
-  const cs = getColorStyles(name);
+  const cs = getColorStyles(name, resolvedTheme === 'light');
 
   // Respond to global collapse/expand commands
   useEffect(() => {

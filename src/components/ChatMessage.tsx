@@ -7,6 +7,7 @@ import remarkBreaks from 'remark-breaks';
 import rehypeHighlight from 'rehype-highlight';
 import { rehypeHighlightOptions } from '../lib/highlight';
 import type { ChatMessage as ChatMessageType, MessageBlock } from '../types';
+import { useTheme } from '../hooks/useTheme';
 import { ThinkingBlock } from './ThinkingBlock';
 import { ThinkingIndicator } from './ThinkingIndicator';
 import { CodeBlock } from './CodeBlock';
@@ -382,6 +383,8 @@ function SystemEventMessage({ message }: { message: ChatMessageType }) {
 
 export function ChatMessageComponent({ message: rawMessage, onRetry, agentAvatarUrl }: { message: ChatMessageType; onRetry?: (text: string) => void; agentAvatarUrl?: string }) {
   useLocale(); // re-render on locale change
+  const { resolvedTheme } = useTheme();
+  const isLight = resolvedTheme === 'light';
   const [showRawJson, setShowRawJson] = useState(false);
 
   // Strip webhook/hook scaffolding from user messages before rendering
@@ -446,7 +449,9 @@ export function ChatMessageComponent({ message: rawMessage, onRetry, agentAvatar
       <div className={`min-w-0 max-w-[80%] ${isUser ? 'text-right' : ''}`}>
         <div className={`group relative inline-block text-left rounded-3xl px-4 py-3 text-sm leading-relaxed max-w-full overflow-hidden ${
           isUser
-            ? 'bg-[rgba(var(--pc-accent-rgb),0.08)] text-pc-text border border-[rgba(var(--pc-accent-rgb),0.2)]'
+            ? (isLight
+                ? 'bg-[rgba(var(--pc-accent-rgb),0.12)] text-pc-text border border-[rgba(var(--pc-accent-rgb),0.3)]'
+                : 'bg-[rgba(var(--pc-accent-rgb),0.08)] text-pc-text border border-[rgba(var(--pc-accent-rgb),0.2)]')
             : 'bg-pc-elevated/40 text-pc-text border border-pc-border shadow-[0_0_0_1px_rgba(255,255,255,0.03)]'
         }`}>
           {/* Action buttons */}

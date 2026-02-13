@@ -180,8 +180,10 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     return () => mq.removeEventListener('change', handler);
   }, [theme]);
 
+  const resolvedTheme = resolveTheme(theme);
+
   return (
-    <ThemeContext.Provider value={{ theme, accent, setTheme, setAccent }}>
+    <ThemeContext.Provider value={{ theme, accent, resolvedTheme, setTheme, setAccent }}>
       {children}
     </ThemeContext.Provider>
   );

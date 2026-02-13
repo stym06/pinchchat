@@ -649,10 +649,17 @@
 ## Item #60
 - **Date:** 2026-02-13
 - **Priority:** high
-- **Status:** pending
+- **Status:** done
+- **Completed:** 2026-02-13 — commit `e596eea`
 - **Description:** Light theme fixes — 4 issues:
-  1. Progress bar colors (sidebar + header) should follow accent color, not hardcoded cyan
-  2. Send button gradient should adapt to theme/accent
-  3. Tool call badges are unreadable in light theme (dark-only Tailwind classes like amber-950, sky-950)
-  4. User message bubble background too subtle in light theme — needs more contrast
-  - Sub-agent working on this (session pinchchat-light-theme-fix)
+  1. Progress bar colors (sidebar + header) should follow accent color, not hardcoded cyan — ✅ already using `--pc-accent-rgb`
+  2. Send button gradient should adapt to theme/accent — ✅ already using `var(--pc-accent)`
+  3. Tool call badges are unreadable in light theme (dark-only Tailwind classes like amber-950, sky-950) — ✅ fixed: darker text + higher bg opacity in light mode
+  4. User message bubble background too subtle in light theme — needs more contrast — ✅ fixed: higher opacity bg + border in light mode
+  - Added `resolvedTheme` to ThemeContext for components to adapt to current theme
+
+## Item #61
+- **Date:** 2026-02-13
+- **Priority:** medium
+- **Status:** pending
+- **Description:** Markdown unordered lists (- item, * item) are not rendered properly in chat messages. They appear as raw text instead of formatted bullet points. Need to verify remarkGfm/ReactMarkdown config handles list rendering correctly, and ensure CSS styles are applied for ul/ol elements in the markdown-body class.
