@@ -304,6 +304,7 @@ export function ChatInput({ onSend, onAbort, isGenerating, disabled, sessionKey 
             />
 
             <HighlightedTextarea
+              id="chat-input"
               ref={textareaRef}
               value={text}
               highlightEnabled={highlightEnabled}

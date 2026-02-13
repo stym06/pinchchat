@@ -283,6 +283,8 @@ export function ToolCall({ name, input, result }: { name: string; input?: Record
         onClick={() => setOpen(!open)}
         className={`inline-flex items-center gap-1.5 rounded-2xl border px-3 py-1.5 text-xs hover:brightness-125 transition-all max-w-full ${cs.glow}`}
         style={{ ...cs.badge, ...cs.text }}
+        aria-expanded={open}
+        aria-label={`${name}${hint ? ` — ${hint}` : ''}: ${open ? 'collapse' : 'expand'} details`}
       >
         <span className="text-[13px] leading-none">{getToolEmoji(name)}</span>
         <span className="font-mono font-semibold shrink-0">{name}</span>

@@ -138,6 +138,7 @@ export default function App() {
   return (
     <ToolCollapseProvider>
     <div className="h-dvh flex overflow-x-hidden bg-[var(--pc-bg-base)] text-pc-text bg-[radial-gradient(ellipse_at_top,rgba(255,255,255,0.02),transparent_50%),radial_gradient(ellipse_at_bottom_right,rgba(99,102,241,0.04),transparent_50%)]" role="application" aria-label="PinchChat">
+      <a href="#chat-input" className="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:rounded-xl focus:bg-pc-accent focus:text-white focus:text-sm focus:font-medium">{t('app.skipToChat')}</a>
       <Sidebar
         sessions={sessions}
         activeSession={activeSession}
@@ -150,13 +151,13 @@ export default function App() {
       />
       <div ref={splitContainerRef} className="flex-1 flex min-w-0" aria-hidden={sidebarOpen ? true : undefined}>
         {/* Primary pane */}
-        <div className="flex flex-col min-w-0" style={splitSession ? { width: `${splitRatio}%` } : { flex: 1 }}>
+        <main className="flex flex-col min-w-0" style={splitSession ? { width: `${splitRatio}%` } : { flex: 1 }} aria-label={t('app.mainChat')}>
           <Header status={status} sessionKey={activeSession} onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} activeSessionData={sessions.find(s => s.key === activeSession)} onLogout={logout} soundEnabled={soundEnabled} onToggleSound={toggleSound} messages={messages} agentAvatarUrl={agentIdentity?.avatar} />
           <ConnectionBanner status={status} />
           <Suspense fallback={<div className="flex-1 flex items-center justify-center text-pc-text-muted"><div className="animate-pulse text-sm">Loading…</div></div>}>
             <Chat messages={messages} isGenerating={isGenerating} isLoadingHistory={isLoadingHistory} status={status} sessionKey={activeSession} onSend={sendMessage} onAbort={abort} agentAvatarUrl={agentIdentity?.avatar} />
           </Suspense>
-        </div>
+        </main>
         {/* Split divider + secondary pane */}
         {splitSession && (
           <>
@@ -166,7 +167,7 @@ export default function App() {
               role="separator"
               aria-orientation="vertical"
             />
-            <div className="flex flex-col min-w-0" style={{ width: `${100 - splitRatio}%` }}>
+            <section className="flex flex-col min-w-0" style={{ width: `${100 - splitRatio}%` }} aria-label={t('app.splitPane')}>
               {/* Secondary header */}
               <div className="flex items-center gap-2 px-3 py-2 border-b border-pc-border bg-[var(--pc-bg-surface)]">
                 <span className="text-sm font-medium text-pc-text truncate flex-1">
@@ -184,7 +185,7 @@ export default function App() {
               <Suspense fallback={<div className="flex-1 flex items-center justify-center text-pc-text-muted"><div className="animate-pulse text-sm">Loading…</div></div>}>
                 <Chat messages={secondary.messages} isGenerating={secondary.isGenerating} isLoadingHistory={secondary.isLoadingHistory} status={status} sessionKey={splitSession} onSend={secondary.sendMessage} onAbort={secondary.abort} agentAvatarUrl={agentIdentity?.avatar} />
               </Suspense>
-            </div>
+            </section>
           </>
         )}
       </div>

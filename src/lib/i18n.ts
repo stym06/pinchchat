@@ -63,6 +63,9 @@ const en = {
   'sidebar.close': 'Close sidebar',
   'sidebar.clearSearch': 'Clear search',
   'split.close': 'Close split view',
+  'app.mainChat': 'Main chat',
+  'app.splitPane': 'Split pane',
+  'app.skipToChat': 'Skip to chat input',
 
   // Thinking
   'thinking.label': 'Thinking',
@@ -180,6 +183,9 @@ const fr: Record<keyof typeof en, string> = {
   'sidebar.close': 'Fermer la barre latérale',
   'sidebar.clearSearch': 'Effacer la recherche',
   'split.close': 'Fermer la vue scindée',
+  'app.mainChat': 'Chat principal',
+  'app.splitPane': 'Volet scindé',
+  'app.skipToChat': 'Aller au champ de saisie',
 
   'thinking.label': 'Réflexion',
   'thinking.reasoning': 'Réflexion…',
