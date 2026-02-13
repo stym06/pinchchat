@@ -4,6 +4,30 @@ All notable changes to PinchChat are documented here.
 
 Format based on [Keep a Changelog](https://keepachangelog.com/), with [Conventional Commits](https://www.conventionalcommits.org/).
 
+## [1.32.2] — 2026-02-13
+
+### Fixed
+- Render markdown unordered and ordered lists with proper bullet/number styles
+
+## [1.32.1] — 2026-02-13
+
+### Fixed
+- Improve light theme readability for tool call badges (darker text, higher bg opacity) and user message bubbles (more contrast)
+
+## [1.32.0] — 2026-02-13
+
+### Added
+- Optimistic message rendering — sent messages appear instantly with status indicators (sending → sent)
+- Debugging section in troubleshooting guide
+
+### Fixed
+- Theme switcher portal — max z-index, remove backdrop-blur to fix compositing issues
+- Theme switcher rendered via portal to escape overflow/stacking context
+- Theme switcher click handling — prevent click-outside from swallowing button clicks
+
+### Tests
+- Add i18n and highlight.js test suites (18 cases, 95 total)
+
 ## [1.31.1] — 2026-02-13
 
 ### Fixed
