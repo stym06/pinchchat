@@ -495,9 +495,18 @@ export function useGateway() {
     hasUnread: unreadSessions.has(s.key),
   }));
 
+  const getClient = useCallback(() => clientRef.current, []);
+
+  const addEventListener = useCallback((fn: (event: string, payload: JsonPayload) => void) => {
+    const client = clientRef.current;
+    if (!client) return () => {};
+    return client.onEvent(fn);
+  }, []);
+
   return {
     status, messages, sessions: enrichedSessions, activeSession, isGenerating, isLoadingHistory,
     sendMessage, abort, switchSession, loadSessions, deleteSession,
     authenticated, login, logout, connectError, isConnecting, agentIdentity,
+    getClient, addEventListener,
   };
 }

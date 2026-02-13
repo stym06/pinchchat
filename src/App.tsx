@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef, lazy, Suspense } from 'react';
 import { useGateway } from './hooks/useGateway';
+import { useSecondarySession } from './hooks/useSecondarySession';
 import { useNotifications, setBaseTitle } from './hooks/useNotifications';
 import { Header } from './components/Header';
 import { Sidebar } from './components/Sidebar';
@@ -7,15 +8,64 @@ import { LoginScreen } from './components/LoginScreen';
 import { ConnectionBanner } from './components/ConnectionBanner';
 import { KeyboardShortcuts } from './components/KeyboardShortcuts';
 import { ToolCollapseProvider } from './contexts/ToolCollapseContext';
+import { sessionDisplayName } from './lib/sessionName';
+import { X } from 'lucide-react';
+import { useT } from './hooks/useLocale';
 
 const Chat = lazy(() => import('./components/Chat').then(m => ({ default: m.Chat })));
+
+const SPLIT_WIDTH_KEY = 'pinchchat-split-width';
+const MIN_SPLIT = 250;
+
+function getSavedSplitRatio(): number {
+  try {
+    const v = localStorage.getItem(SPLIT_WIDTH_KEY);
+    if (v) { const n = Number(v); if (n >= 20 && n <= 80) return n; }
+  } catch { /* noop */ }
+  return 50;
+}
 
 export default function App() {
   const {
     status, messages, sessions, activeSession, isGenerating, isLoadingHistory,
     sendMessage, abort, switchSession, deleteSession,
     authenticated, login, logout, connectError, isConnecting, agentIdentity,
+    getClient, addEventListener,
   } = useGateway();
+  const [splitSession, setSplitSession] = useState<string | null>(null);
+  const [splitRatio, setSplitRatio] = useState(getSavedSplitRatio);
+  const [splitDragging, setSplitDragging] = useState(false);
+  const splitContainerRef = useRef<HTMLDivElement>(null);
+  const splitRatioRef = useRef(splitRatio);
+  const secondary = useSecondarySession(getClient, addEventListener, splitSession);
+  const t = useT();
+  const handleSplit = useCallback((key: string) => {
+    setSplitSession(prev => prev === key ? null : key);
+  }, []);
+
+  // Split pane drag
+  useEffect(() => {
+    if (!splitDragging) return;
+    const onMove = (e: MouseEvent) => {
+      const container = splitContainerRef.current;
+      if (!container) return;
+      const rect = container.getBoundingClientRect();
+      const total = rect.width;
+      if (total < MIN_SPLIT * 2) return;
+      const x = e.clientX - rect.left;
+      const pct = Math.max(20, Math.min(80, (x / total) * 100));
+      setSplitRatio(pct);
+      splitRatioRef.current = pct;
+    };
+    const onUp = () => {
+      setSplitDragging(false);
+      localStorage.setItem(SPLIT_WIDTH_KEY, String(Math.round(splitRatioRef.current)));
+    };
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+    return () => { document.removeEventListener('mousemove', onMove); document.removeEventListener('mouseup', onUp); };
+  }, [splitDragging, splitRatio]);
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const { notify, soundEnabled, toggleSound } = useNotifications();
@@ -93,15 +143,50 @@ export default function App() {
         activeSession={activeSession}
         onSwitch={switchSession}
         onDelete={deleteSession}
+        onSplit={handleSplit}
+        splitSession={splitSession}
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
       />
-      <div className="flex-1 flex flex-col min-w-0" aria-hidden={sidebarOpen ? true : undefined}>
-        <Header status={status} sessionKey={activeSession} onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} activeSessionData={sessions.find(s => s.key === activeSession)} onLogout={logout} soundEnabled={soundEnabled} onToggleSound={toggleSound} messages={messages} agentAvatarUrl={agentIdentity?.avatar} />
-        <ConnectionBanner status={status} />
-        <Suspense fallback={<div className="flex-1 flex items-center justify-center text-zinc-500"><div className="animate-pulse text-sm">Loading…</div></div>}>
-          <Chat messages={messages} isGenerating={isGenerating} isLoadingHistory={isLoadingHistory} status={status} sessionKey={activeSession} onSend={sendMessage} onAbort={abort} agentAvatarUrl={agentIdentity?.avatar} />
-        </Suspense>
+      <div ref={splitContainerRef} className="flex-1 flex min-w-0" aria-hidden={sidebarOpen ? true : undefined}>
+        {/* Primary pane */}
+        <div className="flex flex-col min-w-0" style={splitSession ? { width: `${splitRatio}%` } : { flex: 1 }}>
+          <Header status={status} sessionKey={activeSession} onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} activeSessionData={sessions.find(s => s.key === activeSession)} onLogout={logout} soundEnabled={soundEnabled} onToggleSound={toggleSound} messages={messages} agentAvatarUrl={agentIdentity?.avatar} />
+          <ConnectionBanner status={status} />
+          <Suspense fallback={<div className="flex-1 flex items-center justify-center text-zinc-500"><div className="animate-pulse text-sm">Loading…</div></div>}>
+            <Chat messages={messages} isGenerating={isGenerating} isLoadingHistory={isLoadingHistory} status={status} sessionKey={activeSession} onSend={sendMessage} onAbort={abort} agentAvatarUrl={agentIdentity?.avatar} />
+          </Suspense>
+        </div>
+        {/* Split divider + secondary pane */}
+        {splitSession && (
+          <>
+            <div
+              className={`w-1 cursor-col-resize flex-shrink-0 transition-colors ${splitDragging ? 'bg-pc-accent/60' : 'bg-pc-border hover:bg-pc-accent/40'}`}
+              onMouseDown={() => setSplitDragging(true)}
+              role="separator"
+              aria-orientation="vertical"
+            />
+            <div className="flex flex-col min-w-0" style={{ width: `${100 - splitRatio}%` }}>
+              {/* Secondary header */}
+              <div className="flex items-center gap-2 px-3 py-2 border-b border-pc-border bg-[var(--pc-bg-surface)]">
+                <span className="text-sm font-medium text-pc-text truncate flex-1">
+                  {(() => { const s = sessions.find(s => s.key === splitSession); return s ? sessionDisplayName(s) : splitSession; })()}
+                </span>
+                <button
+                  onClick={() => setSplitSession(null)}
+                  className="p-1 rounded-lg text-pc-text-muted hover:text-pc-text hover:bg-[var(--pc-hover)] transition-colors"
+                  title={t('split.close')}
+                  aria-label={t('split.close')}
+                >
+                  <X size={14} />
+                </button>
+              </div>
+              <Suspense fallback={<div className="flex-1 flex items-center justify-center text-zinc-500"><div className="animate-pulse text-sm">Loading…</div></div>}>
+                <Chat messages={secondary.messages} isGenerating={secondary.isGenerating} isLoadingHistory={secondary.isLoadingHistory} status={status} sessionKey={splitSession} onSend={secondary.sendMessage} onAbort={secondary.abort} agentAvatarUrl={agentIdentity?.avatar} />
+              </Suspense>
+            </div>
+          </>
+        )}
       </div>
       <KeyboardShortcuts open={shortcutsOpen} onClose={() => setShortcutsOpen(false)} />
     </div>

@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
-import { X, Sparkles, Search, Pin, Trash2 } from 'lucide-react';
+import { X, Sparkles, Search, Pin, Trash2, Columns2 } from 'lucide-react';
 import type { Session } from '../types';
 import { useT } from '../hooks/useLocale';
 import { SessionIcon } from './SessionIcon';
@@ -57,11 +57,13 @@ interface Props {
   activeSession: string;
   onSwitch: (key: string) => void;
   onDelete: (key: string) => void;
+  onSplit?: (key: string) => void;
+  splitSession?: string | null;
   open: boolean;
   onClose: () => void;
 }
 
-export function Sidebar({ sessions, activeSession, onSwitch, onDelete, open, onClose }: Props) {
+export function Sidebar({ sessions, activeSession, onSwitch, onDelete, onSplit, splitSession, open, onClose }: Props) {
   const t = useT();
   const [filter, setFilter] = useState('');
   const [focusIdx, setFocusIdx] = useState(-1);
@@ -332,6 +334,20 @@ export function Sidebar({ sessions, activeSession, onSwitch, onDelete, open, onC
                       >
                         <Pin size={12} className={isPinned ? 'fill-current' : ''} />
                       </button>
+                      {onSplit && (
+                        <button
+                          onClick={(e) => { e.stopPropagation(); onSplit(s.key); }}
+                          className={`shrink-0 p-0.5 rounded-lg transition-all ${
+                            splitSession === s.key
+                              ? 'text-pc-accent opacity-80 hover:opacity-100'
+                              : 'text-pc-text-faint opacity-0 group-hover/item:opacity-60 hover:!opacity-100 hover:text-pc-text-secondary'
+                          }`}
+                          title={t('sidebar.openSplit')}
+                          aria-label={t('sidebar.openSplit')}
+                        >
+                          <Columns2 size={12} />
+                        </button>
+                      )}
                       <button
                         onClick={(e) => { e.stopPropagation(); setConfirmDelete(s.key); }}
                         className="shrink-0 p-0.5 rounded-lg transition-all text-pc-text-faint opacity-0 group-hover/item:opacity-60 hover:!opacity-100 hover:text-red-400"

@@ -59,6 +59,8 @@ const en = {
   'sidebar.delete': 'Delete session',
   'sidebar.deleteConfirm': 'Delete this session? This cannot be undone.',
   'sidebar.deleteCancel': 'Cancel',
+  'sidebar.openSplit': 'Open in split view',
+  'split.close': 'Close split view',
 
   // Thinking
   'thinking.label': 'Thinking',
@@ -171,6 +173,8 @@ const fr: Record<keyof typeof en, string> = {
   'sidebar.delete': 'Supprimer la session',
   'sidebar.deleteConfirm': 'Supprimer cette session ? Cette action est irréversible.',
   'sidebar.deleteCancel': 'Annuler',
+  'sidebar.openSplit': 'Ouvrir en vue scindée',
+  'split.close': 'Fermer la vue scindée',
 
   'thinking.label': 'Réflexion',
   'thinking.reasoning': 'Réflexion…',
