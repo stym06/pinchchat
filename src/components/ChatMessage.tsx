@@ -1,5 +1,5 @@
 
-import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
+import { useState, useCallback, useRef, useEffect, useMemo, memo } from 'react';
 import { createPortal } from 'react-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -167,11 +167,15 @@ function MarkdownLink(props: React.AnchorHTMLAttributes<HTMLAnchorElement>) {
 }
 
 const markdownComponents = { pre: CodeBlock, img: MarkdownImage, a: MarkdownLink };
+// Hoisted to module scope to avoid creating new array references each render
+import type { PluggableList } from 'unified';
+const remarkPlugins: PluggableList = [remarkGfm, remarkBreaks];
+const rehypePlugins: PluggableList = [[rehypeHighlight, rehypeHighlightOptions]];
 
 function renderTextBlocks(blocks: MessageBlock[]) {
   return getTextBlocks(blocks).map((block, i) => (
     <div key={`text-${i}`} className="markdown-body">
-      <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]} rehypePlugins={[[rehypeHighlight, rehypeHighlightOptions]]} components={markdownComponents}>
+      <ReactMarkdown remarkPlugins={remarkPlugins} rehypePlugins={rehypePlugins} components={markdownComponents}>
         {autoFormatText((block as Extract<MessageBlock, { type: 'text' }>).text)}
       </ReactMarkdown>
     </div>
@@ -381,7 +385,7 @@ function SystemEventMessage({ message }: { message: ChatMessageType }) {
   );
 }
 
-export function ChatMessageComponent({ message: rawMessage, onRetry, agentAvatarUrl }: { message: ChatMessageType; onRetry?: (text: string) => void; agentAvatarUrl?: string }) {
+export const ChatMessageComponent = memo(function ChatMessageComponent({ message: rawMessage, onRetry, agentAvatarUrl }: { message: ChatMessageType; onRetry?: (text: string) => void; agentAvatarUrl?: string }) {
   useLocale(); // re-render on locale change
   const { resolvedTheme } = useTheme();
   const isLight = resolvedTheme === 'light';
@@ -476,7 +480,7 @@ export function ChatMessageComponent({ message: rawMessage, onRetry, agentAvatar
           {/* User-visible text */}
           {message.blocks.length > 0 ? renderTextBlocks(message.blocks) : (
             <div className="markdown-body">
-              <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]} rehypePlugins={[[rehypeHighlight, rehypeHighlightOptions]]} components={markdownComponents}>
+              <ReactMarkdown remarkPlugins={remarkPlugins} rehypePlugins={rehypePlugins} components={markdownComponents}>
                 {autoFormatText(message.content)}
               </ReactMarkdown>
             </div>
@@ -529,4 +533,4 @@ export function ChatMessageComponent({ message: rawMessage, onRetry, agentAvatar
       </div>
     </div>
   );
-}
+});
