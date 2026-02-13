@@ -4,6 +4,12 @@ All notable changes to PinchChat are documented here.
 
 Format based on [Keep a Changelog](https://keepachangelog.com/), with [Conventional Commits](https://www.conventionalcommits.org/).
 
+## [1.33.0] — 2026-02-13
+
+### Added
+- Syntax highlighting for C, C++, and Java code blocks
+- Aliases: `h` (C headers), `cc`/`cxx`/`c++`/`hpp`/`hxx` (C++ variants)
+
 ## [1.32.2] — 2026-02-13
 
 ### Fixed
