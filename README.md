@@ -32,6 +32,11 @@
 - 🎨 **Themes** — Dark, Light, and OLED Black modes with 6 accent colors. Persisted per-browser.
 - 🧠 **Thinking/reasoning display** — see the agent's reasoning process in collapsible blocks with elapsed time
 - 🔍 **Message search** — Ctrl+F to search and navigate through conversation history
+- 📐 **Split view** — open 2 sessions side by side with a resizable divider
+- ✍️ **Syntax-highlighted input** — real-time markdown coloring as you type (code blocks, bold, links)
+- 🔀 **Drag & drop reorder** — organize sessions in the sidebar by dragging, order persists across reloads
+- 📋 **Raw JSON viewer** — inspect full gateway message payloads for debugging
+- 🗂️ **Channel icons** — Discord, Telegram, cron, and other session types shown with distinct icons
 - 📤 **Export conversations** — download any session as a formatted Markdown file
 - 🌐 **i18n** — English and French built-in, easy to extend
 
