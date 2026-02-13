@@ -1,124 +1,107 @@
 # Architecture
 
-PinchChat is a single-page React app (~3,600 lines) that connects to an [OpenClaw](https://github.com/openclaw/openclaw) gateway via WebSocket. There is no backend — it's a static build served by any web server (nginx, Caddy, Vite preview, etc.).
+A quick map of the PinchChat codebase for contributors.
 
-## High-Level Flow
+## Tech Stack
 
-```
-┌─────────────┐    WebSocket     ┌──────────────────┐    LLM API    ┌──────────┐
-│  PinchChat   │ ◄────────────► │  OpenClaw Gateway  │ ◄──────────► │ Provider │
-│  (Browser)   │   JSON msgs    │  (Node.js daemon)  │              │ (Claude…) │
-└─────────────┘                 └──────────────────┘              └──────────┘
-```
+| Layer | Tech |
+|-------|------|
+| Framework | React 19 + TypeScript |
+| Build | Vite |
+| Styling | Tailwind CSS v4 + CSS custom properties (theming) |
+| Icons | Lucide React |
+| Markdown | react-markdown + rehype-highlight + remark-gfm |
+| State | React hooks + contexts (no external state library) |
 
-PinchChat authenticates at runtime (no secrets in the build). The user enters a gateway URL and token on the login screen, which are stored in `sessionStorage`.
-
-## Directory Structure
+## Directory Layout
 
 ```
 src/
-├── App.tsx                 # Root component: routing, layout, keyboard shortcuts
-├── main.tsx                # Entry point (React 18 createRoot)
-├── index.css               # Global styles (Tailwind v4)
-│
-├── components/             # UI components
-│   ├── Chat.tsx            # Message list, auto-scroll, scroll-to-bottom button
-│   ├── ChatInput.tsx       # Textarea with file upload, drafts per session
-│   ├── ChatMessage.tsx     # Single message: markdown rendering, blocks dispatch
-│   ├── CodeBlock.tsx       # Fenced code blocks with copy button + language label
-│   ├── ConnectionBanner.tsx # Reconnecting/disconnected banner
-│   ├── ErrorBoundary.tsx   # React error boundary with retry
-│   ├── Header.tsx          # Top bar: agent name, session title, controls
-│   ├── ImageBlock.tsx      # Inline image display with lightbox
-│   ├── KeyboardShortcuts.tsx # Keyboard shortcut help modal
-│   ├── LanguageSelector.tsx # EN/FR language switcher
-│   ├── LoginScreen.tsx     # Gateway URL + token input form
-│   ├── SessionIcon.tsx     # Per-channel icons (Telegram, Discord, cron…)
-│   ├── Sidebar.tsx         # Session list, search, pinning, resize, delete
-│   ├── ThinkingBlock.tsx   # Collapsible thinking/reasoning block
-│   ├── ToolCall.tsx        # Tool call badges with expandable params/results
-│   └── TypingIndicator.tsx # Animated typing dots
-│
-├── hooks/                  # Custom React hooks
-│   ├── useGateway.ts       # Core hook: WebSocket connection, message state, session management
-│   ├── useLocale.ts        # i18n hook (useT for translations)
-│   └── useNotifications.ts # Browser notifications + unread badge in document title
-│
-├── lib/                    # Pure utilities (no React)
-│   ├── credentials.ts      # sessionStorage read/write for gateway URL + token
-│   ├── gateway.ts          # WebSocket client: connect, send, reconnect, message parsing
-│   ├── i18n.ts             # Translation strings (EN + FR) and locale detection
-│   ├── image.ts            # Image URL/base64 helpers
-│   ├── notificationSound.ts # Programmatic notification sound (Web Audio API)
-│   ├── relativeTime.ts     # "2m ago", "3h ago" relative timestamp formatting
-│   ├── sessionName.ts      # Human-friendly session name from key/label/channel
-│   ├── systemEvent.ts      # Detect system events (heartbeats, webhooks, cron triggers)
-│   └── utils.ts            # Misc helpers (cn class merger)
-│
-├── types/
-│   └── index.ts            # TypeScript interfaces: ChatMessage, Session, MessageBlock, etc.
-│
-└── globals.d.ts            # Ambient type declarations
+├── App.tsx              # Root: login gate, layout, lazy-loads Chat
+├── main.tsx             # Entry point, renders App inside ErrorBoundary
+├── types.ts             # Shared TypeScript types (Session, Message, etc.)
+├── components/          # React components (see below)
+├── hooks/               # Custom React hooks
+├── lib/                 # Pure utility modules (no React)
+└── contexts/            # React contexts (theme, tool collapse state)
 ```
 
-## Key Concepts
+## Key Components
 
-### Gateway Communication (`lib/gateway.ts` + `hooks/useGateway.ts`)
+| Component | Purpose |
+|-----------|---------|
+| `LoginScreen` | Gateway URL + token input, credential persistence |
+| `Chat` | Main chat view: messages, input, header, search, split-view |
+| `ChatMessage` | Single message renderer (user/assistant/system events) |
+| `ChatInput` | Message composer with syntax-highlighted textarea + markdown preview |
+| `Sidebar` | Session list with search, pin, drag-reorder, delete, split-view |
+| `Header` | Top bar: agent name/avatar, model badge, token bar, theme/language switchers |
+| `ToolCall` | Expandable tool call card with emoji badges, params, results |
+| `ThinkingBlock` | Collapsible reasoning/thinking content display |
+| `CodeBlock` | Syntax-highlighted code with copy button |
+| `ImageBlock` | Inline image with loading skeleton, error fallback, lightbox |
+| `MessageSearch` | Ctrl+F search overlay with result navigation |
+| `KeyboardShortcuts` | `?` shortcut help dialog |
 
-The WebSocket client handles:
-- **Authentication**: sends token on connect
-- **Session listing**: `sessions.list` → populates sidebar
-- **Message history**: `history` → loads past messages for a session
-- **Streaming**: `stream.start` / `stream.delta` / `stream.end` → real-time token display
-- **Sending**: user messages, file uploads (base64)
-- **Reconnection**: exponential backoff with jitter on disconnect
+## Hooks
 
-`useGateway` is the central hook that owns all state: connection status, sessions, messages, active session, and generating flag.
+| Hook | Purpose |
+|------|---------|
+| `useGateway` | Core hook: WebSocket connection, message streaming, session management, sending. This is the brain. |
+| `useSecondarySession` | Split-view: manages a second session's messages independently |
+| `useLocale` | i18n: language state + `t()` translation function |
+| `useTheme` | Theme read/write from ThemeContext |
+| `useToolCollapse` | Global expand/collapse state for tool calls |
+| `useNotifications` | Browser notification permission + sound alerts for new messages |
 
-### Message Rendering (`ChatMessage.tsx`)
+## Data Flow
 
-Messages are rendered block-by-block:
-1. **Text blocks** → `ReactMarkdown` with `remark-gfm`, `remark-breaks`, `rehype-highlight`
-2. **Thinking blocks** → collapsible `ThinkingBlock`
-3. **Tool use blocks** → `ToolCall` badges (colored by tool name, expandable)
-4. **Tool result blocks** → attached to their parent tool use
-5. **Image blocks** → `ImageBlock` with lightbox
-
-System events (heartbeats, webhooks) are detected via heuristics in `lib/systemEvent.ts` and rendered as subtle inline notifications instead of full message bubbles.
-
-### Session Management
-
-Sessions are displayed in the sidebar with:
-- **Channel icons** (Telegram, Discord, cron, etc.) via `SessionIcon`
-- **Human-readable names** via `lib/sessionName.ts` (instead of raw UUIDs)
-- **Pinning** (persisted in `localStorage`)
-- **Resizable sidebar** (drag right edge, width persisted)
-- **Search/filter** (`Cmd+K`)
-- **Delete** with confirmation dialog
-- **Per-session input drafts** (preserved when switching sessions)
-- **Recency sorting** with relative timestamps and message previews
-
-### Styling
-
-- **Tailwind CSS v4** with a dark zinc-based theme
-- No component library — all custom components
-- Consistent border/glow patterns: `border-white/8`, `bg-zinc-800/50`, cyan accents
-- Responsive: mobile sidebar collapses, viewport-safe on iPhone
-
-### i18n (`lib/i18n.ts`)
-
-Simple key-value translation system with EN and FR. Language detected from `localStorage` → `navigator.language` → defaults to EN. Switchable via the header dropdown.
-
-## Build & Deploy
-
-```bash
-npm run build          # Vite production build → dist/
+```
+OpenClaw Gateway ←—WebSocket—→ useGateway hook
+                                    │
+                         ┌──────────┼──────────┐
+                         ▼          ▼          ▼
+                      Sidebar    Chat      Header
+                    (sessions)  (messages)  (status)
 ```
 
-Output is a static SPA. The Docker image (`ghcr.io/marlburrow/pinchchat`) uses multi-stage build: Node for compilation, nginx:alpine for serving.
+1. **Connect**: `LoginScreen` collects gateway URL + token → `useGateway` opens a WebSocket
+2. **Sessions**: Gateway pushes session list → stored in hook state → rendered in `Sidebar`
+3. **Messages**: On session select, hook requests history → streamed tokens arrive as `delta` events → accumulated into messages → rendered by `ChatMessage`
+4. **Sending**: `ChatInput` calls `sendMessage()` from the hook → serialized over WebSocket
+5. **Tool calls**: Arrive as structured blocks within assistant messages → rendered by `ToolCall` with collapsible params/results
 
-CI/CD:
-- **ci.yml** — lint + build on every push/PR
-- **docker.yml** — build + push Docker image on push to main
-- **release.yml** — on tag push (v*): Docker image with semver tags + GitHub Release
-- **pages.yml** — deploy landing page from `docs/` to GitHub Pages
+## Theming
+
+Themes use CSS custom properties defined in `ThemeContext`. All components reference `var(--pc-*)` variables (via Tailwind utility classes like `text-pc-text`, `bg-pc-elevated`, etc.) rather than hardcoded colors.
+
+Available themes: **Dark** (default), **Light**, **OLED Black**, **System** (follows OS preference).
+
+Accent colors: Cyan, Violet, Emerald, Amber, Rose, Blue.
+
+## Bundle Strategy
+
+Vite splits the build into chunks via `manualChunks` in `vite.config.ts`:
+
+| Chunk | Contents |
+|-------|----------|
+| `react-vendor` | React + ReactDOM |
+| `markdown` | react-markdown, remark/rehype plugins, highlight.js |
+| `icons` | lucide-react |
+| `ui` | @radix-ui primitives |
+| `index` | App code |
+
+`Chat` is lazy-loaded (`React.lazy`) so the markdown chunk only loads after login.
+
+## Gateway Protocol
+
+PinchChat communicates with OpenClaw via a WebSocket protocol. Key message types:
+
+- **Outbound**: `auth`, `subscribe`, `send`, `listSessions`, `loadHistory`, `deleteSession`
+- **Inbound**: `authenticated`, `sessions`, `history`, `delta` (streaming tokens), `message` (complete), `error`
+
+The protocol is implemented in `src/lib/gateway.ts` (low-level) and `src/hooks/useGateway.ts` (React integration).
+
+## PWA
+
+A service worker (`public/sw.js`) caches static assets for offline shell support. The app is installable via the browser's "Add to Home Screen" prompt.
