@@ -4,6 +4,7 @@ import { ChatInput } from './ChatInput';
 import { TypingIndicator } from './TypingIndicator';
 import type { ChatMessage, ConnectionStatus } from '../types';
 import { Bot, ArrowDown, Loader2, ChevronsDownUp, ChevronsUpDown } from 'lucide-react';
+import { MessageSearch } from './MessageSearch';
 import { useT } from '../hooks/useLocale';
 import { getLocale, type TranslationKey } from '../lib/i18n';
 import { useToolCollapse } from '../hooks/useToolCollapse';
@@ -131,8 +132,61 @@ export function Chat({ messages, isGenerating, isLoadingHistory, status, session
   const { globalState, collapseAll, expandAll } = useToolCollapse();
   const hasToolCalls = useMemo(() => messages.some(m => m.blocks.some(b => b.type === 'tool_use' || b.type === 'tool_result')), [messages]);
 
+  // Message search
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchActiveIndex, setSearchActiveIndex] = useState(0);
+  // Compute matches: list of message IDs containing the query
+  const searchMatches = useMemo(() => {
+    if (!searchQuery.trim()) return [] as string[];
+    const q = searchQuery.toLowerCase();
+    return visibleMessages
+      .filter(({ msg }) => {
+        const content = msg.content?.toLowerCase() || '';
+        if (content.includes(q)) return true;
+        return msg.blocks.some(b => {
+          if (b.type === 'text' || b.type === 'thinking') return b.text.toLowerCase().includes(q);
+          if (b.type === 'tool_result') return b.content.toLowerCase().includes(q);
+          return false;
+        });
+      })
+      .map(({ msg }) => msg.id);
+  }, [visibleMessages, searchQuery]);
+
+  const handleSearch = useCallback((query: string, activeIndex: number) => {
+    setSearchQuery(query);
+    setSearchActiveIndex(activeIndex);
+  }, []);
+
+  // Scroll to active match
+  useEffect(() => {
+    if (searchMatches.length === 0) return;
+    const id = searchMatches[searchActiveIndex];
+    if (!id) return;
+    const el = scrollContainerRef.current?.querySelector(`[data-msg-id="${id}"]`);
+    el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, [searchActiveIndex, searchMatches]);
+
+  const closeSearch = useCallback(() => {
+    setSearchOpen(false);
+    setSearchQuery('');
+  }, []);
+
+  // Ctrl+F handler
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'f') {
+        e.preventDefault();
+        setSearchOpen(true);
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, []);
+
   return (
     <div className="flex-1 flex flex-col min-h-0 relative">
+      <MessageSearch open={searchOpen} onClose={closeSearch} onSearch={handleSearch} matchCount={searchMatches.length} />
       <div ref={scrollContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden relative" role="log" aria-label={t('chat.messages')} aria-live="polite">
         <div className="max-w-4xl mx-auto py-4 w-full">
           {messages.length === 0 && isLoadingHistory && (
@@ -153,8 +207,10 @@ export function Chat({ messages, isGenerating, isLoadingHistory, status, session
               <div className="text-sm mt-1 text-pc-text-muted">{t('chat.welcomeSub')}</div>
             </div>
           )}
-          {visibleMessages.map(({ msg, showSep }) => (
-                <div key={msg.id}>
+          {visibleMessages.map(({ msg, showSep }) => {
+            const isActiveMatch = searchMatches.length > 0 && searchMatches[searchActiveIndex] === msg.id;
+            return (
+                <div key={msg.id} data-msg-id={msg.id}>
                   {showSep && (
                     <div className="flex items-center gap-3 py-3 px-4 select-none" aria-label={formatDateSeparator(msg.timestamp, t)}>
                       <div className="flex-1 h-px bg-[var(--pc-hover-strong)]" />
@@ -162,9 +218,12 @@ export function Chat({ messages, isGenerating, isLoadingHistory, status, session
                       <div className="flex-1 h-px bg-[var(--pc-hover-strong)]" />
                     </div>
                   )}
-                  <ChatMessageComponent message={msg} onRetry={!isGenerating ? handleSend : undefined} agentAvatarUrl={agentAvatarUrl} />
+                  <div className={isActiveMatch ? 'ring-1 ring-pc-accent-light/40 rounded-lg' : ''}>
+                    <ChatMessageComponent message={msg} onRetry={!isGenerating ? handleSend : undefined} agentAvatarUrl={agentAvatarUrl} />
+                  </div>
                 </div>
-          ))}
+            );
+          })}
           {showTyping && <TypingIndicator />}
           <div ref={bottomRef} />
         </div>

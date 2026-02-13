@@ -110,6 +110,13 @@ const en = {
   'theme.dark': 'Dark',
   'theme.light': 'Light',
   'theme.oled': 'OLED',
+
+  // Message search
+  'search.placeholder': 'Search messages…',
+  'search.noResults': '0 results',
+  'search.prev': 'Previous match',
+  'search.next': 'Next match',
+  'shortcuts.searchMessages': 'Search messages',
 } as const;
 
 const fr: Record<keyof typeof en, string> = {
@@ -202,6 +209,12 @@ const fr: Record<keyof typeof en, string> = {
   'theme.dark': 'Sombre',
   'theme.light': 'Clair',
   'theme.oled': 'OLED',
+
+  'search.placeholder': 'Rechercher dans les messages…',
+  'search.noResults': '0 résultat',
+  'search.prev': 'Résultat précédent',
+  'search.next': 'Résultat suivant',
+  'shortcuts.searchMessages': 'Rechercher dans les messages',
 };
 
 export type TranslationKey = keyof typeof en;

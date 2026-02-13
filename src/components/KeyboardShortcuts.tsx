@@ -90,6 +90,10 @@ export function KeyboardShortcuts({ open, onClose }: Props) {
               keys={<Kbd>Esc</Kbd>}
               label={t('shortcuts.stop')}
             />
+            <ShortcutRow
+              keys={<><Kbd>{mod}</Kbd><span className="text-pc-text-faint">+</span><Kbd>F</Kbd></>}
+              label={t('shortcuts.searchMessages')}
+            />
           </div>
 
           <div className="py-3">
