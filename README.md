@@ -222,6 +222,22 @@ docker run -p 8080:80 ghcr.io/marlburrow/pinchchat:latest
 - Inline images require the gateway to send media as base64 data URLs or accessible HTTP URLs
 - If images show as broken, the gateway may be behind a reverse proxy that strips large payloads — check proxy buffer settings
 
+### Debugging
+
+PinchChat includes built-in debugging tools:
+
+**WebSocket debug logging** — open the browser console (F12) and run:
+
+```js
+localStorage.setItem('pinchchat:debug', '1');
+```
+
+Reload the page. All WebSocket frames (sent and received) will be logged to the console with a `[GW]` prefix. Set to `'0'` to disable.
+
+**Raw JSON viewer** — click the `{ }` toggle on any message to see the full gateway payload as formatted JSON. Useful for understanding the protocol or reporting bugs.
+
+**Metadata inspector** — hover over any message and click the ℹ️ icon to see message metadata (timestamp, ID, channel, sender info).
+
 ### Build errors from source
 
 ```bash
