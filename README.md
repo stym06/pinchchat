@@ -279,6 +279,98 @@ npm install
 npm run build
 ```
 
+## 🔀 Reverse Proxy
+
+PinchChat is a static SPA — serve it behind any reverse proxy. The only special requirement is WebSocket support for the OpenClaw gateway connection.
+
+> **Note:** PinchChat itself only serves static files (HTML/JS/CSS). The WebSocket connection goes directly from the **browser** to your OpenClaw gateway, not through PinchChat's server. You only need to proxy WebSocket if you're also putting the gateway behind the same reverse proxy.
+
+### Nginx
+
+```nginx
+server {
+    listen 443 ssl;
+    server_name chat.example.com;
+
+    # PinchChat static files
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        # Or serve directly from the build output:
+        # root /path/to/pinchchat/dist;
+        # try_files $uri $uri/ /index.html;
+    }
+}
+
+# Optional: proxy the OpenClaw gateway too
+server {
+    listen 443 ssl;
+    server_name gw.example.com;
+
+    location / {
+        proxy_pass http://127.0.0.1:18789;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_read_timeout 86400s;  # Keep WebSocket alive
+    }
+}
+```
+
+### Caddy
+
+```caddyfile
+chat.example.com {
+    reverse_proxy 127.0.0.1:3000
+}
+
+# Optional: proxy the gateway
+gw.example.com {
+    reverse_proxy 127.0.0.1:18789
+}
+```
+
+Caddy handles WebSocket upgrades and TLS automatically.
+
+### Traefik (Docker labels)
+
+```yaml
+services:
+  pinchchat:
+    image: ghcr.io/marlburrow/pinchchat:latest
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.pinchchat.rule=Host(`chat.example.com`)"
+      - "traefik.http.routers.pinchchat.tls.certresolver=letsencrypt"
+      - "traefik.http.services.pinchchat.loadbalancer.server.port=80"
+```
+
+### Traefik (Kubernetes IngressRoute)
+
+```yaml
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: pinchchat
+spec:
+  entryPoints: [websecure]
+  routes:
+    - match: Host(`chat.example.com`)
+      kind: Rule
+      services:
+        - name: pinchchat
+          port: 80
+  tls:
+    certResolver: letsencrypt
+```
+
+### Important notes
+
+- **HTTPS + WSS**: If PinchChat is served over HTTPS, the gateway URL must use `wss://` — browsers block mixed content (`https` page → `ws://` connection)
+- **Timeouts**: Set generous read timeouts for the gateway proxy (WebSocket connections are long-lived). Nginx defaults to 60s which will drop the connection.
+- **Buffering**: If images aren't loading, increase proxy buffer sizes (`proxy_buffer_size`, `proxy_buffers` in Nginx)
+- **Health checks**: The PinchChat container responds to `GET /` with the SPA — use it as a health check endpoint
+
 ## 🛠 Tech Stack
 
 - [React](https://react.dev/) 19
